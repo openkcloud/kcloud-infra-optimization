@@ -242,28 +242,34 @@ cluster_templates:
 
 ## API 엔드포인트
 
-```bash
-# 클러스터 관리
-POST /clusters                    # 클러스터 생성
-GET /clusters                     # 클러스터 목록
-GET /clusters/{cluster_id}        # 클러스터 상세
-PUT /clusters/{cluster_id}/scale  # 클러스터 스케일링
-DELETE /clusters/{cluster_id}     # 클러스터 삭제
+### Cluster Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/clusters` | Create new cluster |
+| GET | `/clusters` | List all clusters |
+| GET | `/clusters/{cluster_id}` | Get cluster details |
+| PUT | `/clusters/{cluster_id}/scale` | Scale cluster |
+| DELETE | `/clusters/{cluster_id}` | Delete cluster |
 
-# 클러스터 템플릿 관리  
-GET /templates                    # 템플릿 목록
-POST /templates                   # 템플릿 생성
-GET /templates/{template_id}      # 템플릿 상세
+### Template Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/templates` | List templates |
+| POST | `/templates` | Create template |
+| GET | `/templates/{template_id}` | Get template details |
 
-# 워크로드 매칭
-POST /match/workload              # 워크로드에 최적 클러스터 추천
-GET /clusters/available           # 사용 가능한 클러스터 목록
+### Workload Matching
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/match/workload` | Recommend optimal cluster |
+| GET | `/clusters/available` | List available clusters |
 
-# 모니터링
-GET /clusters/{cluster_id}/status # 클러스터 상태
-GET /clusters/{cluster_id}/metrics # 클러스터 메트릭
-GET /clusters/{cluster_id}/costs  # 클러스터 비용
-```
+### Monitoring
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/clusters/{cluster_id}/status` | Get cluster status |
+| GET | `/clusters/{cluster_id}/metrics` | Get cluster metrics |
+| GET | `/clusters/{cluster_id}/costs` | Get cluster costs |
 
 ## 사용 예시
 
