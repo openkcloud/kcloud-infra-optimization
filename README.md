@@ -148,6 +148,23 @@ cp .env.example .env
 python -c "from monitoring.config import openstack_config; print(openstack_config)"
 ```
 
+## Environment Variables
+
+Copy the `.env.example` file to `.env` and configure the following variables:
+
+### OpenStack Configuration
+- `OS_AUTH_URL`: OpenStack authentication endpoint
+- `OS_USERNAME`: OpenStack username
+- `OS_PASSWORD`: OpenStack password (required)
+- `OS_PROJECT_NAME`: OpenStack project name
+- `OS_REGION_NAME`: OpenStack region
+
+### Database Configuration
+- `POSTGRES_HOST`: PostgreSQL host address
+- `POSTGRES_PASSWORD`: PostgreSQL password (required)
+- `REDIS_HOST`: Redis host address
+- `REDIS_PASSWORD`: Redis password (optional)
+
 ## 설정
 
 ### OpenStack 연동 설정
