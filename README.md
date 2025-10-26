@@ -124,6 +124,30 @@ resources:
 - Redis 6.0+
 - Access to OpenStack API endpoints
 
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/kcloud-intra-reconfiguration.git
+cd kcloud-intra-reconfiguration
+```
+
+2. Install Python dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+3. Configure environment variables:
+```bash
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+4. Verify OpenStack connection:
+```bash
+python -c "from monitoring.config import openstack_config; print(openstack_config)"
+```
+
 ## 설정
 
 ### OpenStack 연동 설정
