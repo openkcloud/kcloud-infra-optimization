@@ -73,22 +73,22 @@ class DatabaseManager:
     async def connect(self):
         """데이터베이스 연결"""
         try:
-            logger.info("🔌 데이터베이스 연결 시작...")
-            
+            logger.info("데이터베이스 연결 시작...")
+
             # PostgreSQL 연결 풀 생성
             await self._connect_postgres()
-            
+
             # Redis 연결
             await self._connect_redis()
-            
+
             # 연결 상태 확인
             await self._verify_connections()
-            
+
             self._connected = True
-            logger.info("✅ 데이터베이스 연결 완료")
-            
+            logger.info("데이터베이스 연결 완료")
+
         except Exception as e:
-            logger.error(f"❌ 데이터베이스 연결 실패: {e}")
+            logger.error(f"데이터베이스 연결 실패: {e}")
             await self.disconnect()
             raise
     
@@ -105,10 +105,10 @@ class DatabaseManager:
                     'search_path': 'public',
                 }
             )
-            logger.info(f"📊 PostgreSQL 연결 풀 생성: {self.config.postgres_host}:{self.config.postgres_port}")
-            
+            logger.info(f"PostgreSQL 연결 풀 생성: {self.config.postgres_host}:{self.config.postgres_port}")
+
         except Exception as e:
-            logger.error(f"❌ PostgreSQL 연결 실패: {e}")
+            logger.error(f"PostgreSQL 연결 실패: {e}")
             raise
     
     async def _connect_redis(self):
@@ -125,10 +125,10 @@ class DatabaseManager:
             
             # 연결 테스트
             await self.redis_client.ping()
-            logger.info(f"🔴 Redis 연결 완료: {self.config.redis_host}:{self.config.redis_port}")
-            
+            logger.info(f"Redis 연결 완료: {self.config.redis_host}:{self.config.redis_port}")
+
         except Exception as e:
-            logger.error(f"❌ Redis 연결 실패: {e}")
+            logger.error(f"Redis 연결 실패: {e}")
             raise
     
     async def _verify_connections(self):
@@ -137,42 +137,42 @@ class DatabaseManager:
             # PostgreSQL 테스트
             async with self.postgres_pool.acquire() as conn:
                 version = await conn.fetchval("SELECT version()")
-                logger.info(f"📊 PostgreSQL 버전: {version.split(',')[0]}")
-                
+                logger.info(f"PostgreSQL 버전: {version.split(',')[0]}")
+
                 # TimescaleDB 확장 확인
                 timescale = await conn.fetchval(
                     "SELECT installed_version FROM pg_available_extensions WHERE name = 'timescaledb'"
                 )
                 if timescale:
-                    logger.info(f"⏰ TimescaleDB 버전: {timescale}")
+                    logger.info(f"TimescaleDB 버전: {timescale}")
                 else:
-                    logger.warning("⚠️ TimescaleDB 확장이 설치되지 않음")
-            
+                    logger.warning("TimescaleDB 확장이 설치되지 않음")
+
             # Redis 테스트
             redis_info = await self.redis_client.info()
-            logger.info(f"🔴 Redis 버전: {redis_info['redis_version']}")
-            logger.info(f"🔴 Redis 메모리: {redis_info['used_memory_human']}")
-            
+            logger.info(f"Redis 버전: {redis_info['redis_version']}")
+            logger.info(f"Redis 메모리: {redis_info['used_memory_human']}")
+
         except Exception as e:
-            logger.error(f"❌ 연결 확인 실패: {e}")
+            logger.error(f"연결 확인 실패: {e}")
             raise
     
     async def disconnect(self):
         """데이터베이스 연결 해제"""
-        logger.info("🔌 데이터베이스 연결 해제 중...")
-        
+        logger.info("데이터베이스 연결 해제 중...")
+
         # PostgreSQL 연결 풀 닫기
         if self.postgres_pool:
             await self.postgres_pool.close()
             self.postgres_pool = None
-        
+
         # Redis 연결 닫기
         if self.redis_client:
             await self.redis_client.close()
             self.redis_client = None
-        
+
         self._connected = False
-        logger.info("✅ 데이터베이스 연결 해제 완료")
+        logger.info("데이터베이스 연결 해제 완료")
     
     @asynccontextmanager
     async def postgres_transaction(self) -> AsyncGenerator[asyncpg.Connection, None]:
@@ -326,33 +326,33 @@ async def database_context():
 if __name__ == "__main__":
     async def test_connection():
         """연결 테스트"""
-        print("🧪 데이터베이스 연결 테스트")
+        print("데이터베이스 연결 테스트")
         print("=" * 40)
-        
+
         async with database_context() as db:
             # 상태 확인
             health = await db.health_check()
-            print(f"📊 연결 상태: {health}")
-            
+            print(f"연결 상태: {health}")
+
             # PostgreSQL 테스트
             try:
                 tables = await db.execute_query(
                     "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
                 )
-                print(f"📊 테이블 수: {len(tables)}")
+                print(f"테이블 수: {len(tables)}")
                 for table in tables[:5]:  # 처음 5개만
                     print(f"  - {table['table_name']}")
             except Exception as e:
-                print(f"❌ PostgreSQL 테스트 실패: {e}")
-            
+                print(f"PostgreSQL 테스트 실패: {e}")
+
             # Redis 테스트
             try:
                 await db.redis_set("test:connection", "success", 60)
                 value = await db.redis_get("test:connection")
-                print(f"🔴 Redis 테스트: {value}")
+                print(f"Redis 테스트: {value}")
                 await db.redis_delete("test:connection")
             except Exception as e:
-                print(f"❌ Redis 테스트 실패: {e}")
+                print(f"Redis 테스트 실패: {e}")
     
     # 테스트 실행
     asyncio.run(test_connection())
