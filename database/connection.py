@@ -33,7 +33,7 @@ class DatabaseConfig:
         self.postgres_port = int(os.getenv('POSTGRES_PORT', 5432))
         self.postgres_db = os.getenv('POSTGRES_DB', 'kcloud_opt')
         self.postgres_user = os.getenv('POSTGRES_USER', 'kcloud_user')
-        self.postgres_password = os.getenv('POSTGRES_PASSWORD', 'kcloud123')
+        self.postgres_password = os.getenv('POSTGRES_PASSWORD', '')
         
         # Redis 설정
         self.redis_host = os.getenv('REDIS_HOST', 'localhost')
