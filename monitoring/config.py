@@ -10,15 +10,15 @@ from typing import Dict, List, Optional
 @dataclass
 class OpenStackConfig:
     """OpenStack 연결 설정"""
-    auth_url: str = "http://10.0.4.200:5000/v3"
-    username: str = "admin"
-    password: str = "ketilinux"
-    project_name: str = "cloud-platform"
-    project_domain_name: str = "Default"
-    user_domain_name: str = "Default"
-    region_name: str = "RegionOne"
-    interface: str = "public"
-    identity_api_version: str = "3"
+    auth_url: str = os.getenv('OS_AUTH_URL', "http://10.0.4.200:5000/v3")
+    username: str = os.getenv('OS_USERNAME', "admin")
+    password: str = os.getenv('OS_PASSWORD', "")
+    project_name: str = os.getenv('OS_PROJECT_NAME', "cloud-platform")
+    project_domain_name: str = os.getenv('OS_PROJECT_DOMAIN_NAME', "Default")
+    user_domain_name: str = os.getenv('OS_USER_DOMAIN_NAME', "Default")
+    region_name: str = os.getenv('OS_REGION_NAME', "RegionOne")
+    interface: str = os.getenv('OS_INTERFACE', "public")
+    identity_api_version: str = os.getenv('OS_IDENTITY_API_VERSION', "3")
 
 @dataclass
 class MonitoringConfig:
