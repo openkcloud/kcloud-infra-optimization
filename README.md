@@ -376,6 +376,23 @@ If you encounter any issues or have questions:
 
 For security vulnerabilities, please email the maintainers directly.
 
+## Roadmap
+
+### Planned Features
+- [ ] Auto-scaling based on workload metrics
+- [ ] Multi-region cluster management
+- [ ] Cost optimization recommendations
+- [ ] Advanced monitoring dashboards
+- [ ] Integration with more AI accelerators
+
+### Future Improvements
+- [ ] Enhanced security features
+- [ ] Performance optimization
+- [ ] Extended API capabilities
+- [ ] Better documentation and examples
+
+See the [open issues](https://github.com/yourusername/kcloud-intra-reconfiguration/issues) for a full list of proposed features and known issues.
+
 ## License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
