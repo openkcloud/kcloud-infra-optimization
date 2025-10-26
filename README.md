@@ -116,6 +116,14 @@ resources:
         - "power_monitoring=kepler"
 ```
 
+## Prerequisites
+
+- Python 3.8 or higher
+- OpenStack environment with Magnum service enabled
+- PostgreSQL 12+ with TimescaleDB extension
+- Redis 6.0+
+- Access to OpenStack API endpoints
+
 ## 설정
 
 ### OpenStack 연동 설정
