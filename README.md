@@ -2,6 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
+[![OpenStack](https://img.shields.io/badge/OpenStack-Magnum-red.svg)](https://docs.openstack.org/magnum/)
 
 **Multi-cluster management module for AI workload orchestration**
 
