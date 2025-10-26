@@ -76,19 +76,42 @@ openstack_config = OpenStackConfig()
 monitoring_config = MonitoringConfig()
 
 def get_openstack_config() -> OpenStackConfig:
-    """OpenStack 설정 반환"""
+    """
+    Get current OpenStack configuration.
+
+    Returns:
+        OpenStackConfig: Current OpenStack configuration instance
+    """
     return openstack_config
 
 def get_monitoring_config() -> MonitoringConfig:
-    """모니터링 설정 반환"""
+    """
+    Get current monitoring configuration.
+
+    Returns:
+        MonitoringConfig: Current monitoring configuration instance
+    """
     return monitoring_config
 
 def get_cluster_template(template_name: str) -> Optional[ClusterTemplate]:
-    """클러스터 템플릿 정보 반환"""
+    """
+    Get cluster template by name.
+
+    Args:
+        template_name: Name of the cluster template
+
+    Returns:
+        ClusterTemplate if found, None otherwise
+    """
     return CLUSTER_TEMPLATES.get(template_name)
 
-def update_config_from_env():
-    """환경 변수에서 설정 업데이트"""
+def update_config_from_env() -> None:
+    """
+    Update configuration from environment variables.
+
+    Reads environment variables and updates the global configuration
+    instances for OpenStack and monitoring settings.
+    """
     global openstack_config, monitoring_config
     
     # OpenStack 설정

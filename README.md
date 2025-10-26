@@ -17,7 +17,7 @@ An intelligent infrastructure management system that dynamically creates and man
 ## Project Structure
 
 ```
-kcloud-intra-reconfiguration/
+kcloud-infra-reconfiguration/
 ├── cluster_api.py              # Cluster API endpoints
 ├── cluster_group_orchestrator.py  # Cluster group orchestration
 ├── virtual_cluster_group_manager.py  # Virtual cluster management
@@ -36,8 +36,8 @@ kcloud-intra-reconfiguration/
 
 ```bash
 # Clone and install
-git clone https://github.com/yourusername/kcloud-intra-reconfiguration.git
-cd kcloud-intra-reconfiguration
+git clone https://github.com/yourusername/kcloud-infra-reconfiguration.git
+cd kcloud-infra-reconfiguration
 pip install -r requirements.txt
 
 # Configure environment
@@ -160,8 +160,8 @@ resources:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/kcloud-intra-reconfiguration.git
-cd kcloud-intra-reconfiguration
+git clone https://github.com/yourusername/kcloud-infra-reconfiguration.git
+cd kcloud-infra-reconfiguration
 ```
 
 2. Install Python dependencies:
@@ -373,7 +373,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 If you encounter any issues or have questions:
 
-- Open an issue on [GitHub Issues](https://github.com/yourusername/kcloud-intra-reconfiguration/issues)
+- Open an issue on [GitHub Issues](https://github.com/yourusername/kcloud-infra-reconfiguration/issues)
 - Check existing issues for solutions
 - Review the documentation and examples
 
@@ -394,7 +394,7 @@ For security vulnerabilities, please email the maintainers directly.
 - [ ] Extended API capabilities
 - [ ] Better documentation and examples
 
-See the [open issues](https://github.com/yourusername/kcloud-intra-reconfiguration/issues) for a full list of proposed features and known issues.
+See the [open issues](https://github.com/yourusername/kcloud-infra-reconfiguration/issues) for a full list of proposed features and known issues.
 
 ## License
 
