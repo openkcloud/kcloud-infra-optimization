@@ -351,10 +351,13 @@ kubectl get pods -n kcloud
 
 ## 보안
 
-- **OpenStack 인증**: Keystone을 통한 안전한 API 인증
-- **RBAC**: 클러스터별 역할 기반 접근 제어
-- **네트워크 격리**: Neutron을 통한 클러스터 간 네트워크 분리
-- **시크릿 관리**: 클러스터 인증서 및 키 보안 저장
+| Security Feature | Implementation |
+|------------------|----------------|
+| **Authentication** | Keystone-based secure API authentication |
+| **Authorization** | Role-Based Access Control (RBAC) per cluster |
+| **Network Isolation** | Neutron-based network separation between clusters |
+| **Secret Management** | Secure storage of cluster certificates and keys |
+| **Environment Variables** | Sensitive data stored in .env files (not in version control) |
 
 ## Contributing
 
