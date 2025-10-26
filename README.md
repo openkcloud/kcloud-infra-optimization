@@ -27,6 +27,22 @@ kcloud-intra-reconfiguration/
 └── LICENSE                    # Apache 2.0 License
 ```
 
+## Quick Start
+
+```bash
+# Clone and install
+git clone https://github.com/yourusername/kcloud-intra-reconfiguration.git
+cd kcloud-intra-reconfiguration
+pip install -r requirements.txt
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your credentials
+
+# Run the application
+python src/main.py
+```
+
 ## 주요 기능
 
 ### Magnum 클러스터 관리
