@@ -145,11 +145,16 @@ resources:
 
 ## Prerequisites
 
-- Python 3.8 or higher
-- OpenStack environment with Magnum service enabled
-- PostgreSQL 12+ with TimescaleDB extension
-- Redis 6.0+
-- Access to OpenStack API endpoints
+### Required
+- **Python**: 3.8 or higher
+- **OpenStack**: With Magnum service enabled (tested on Wallaby+)
+- **PostgreSQL**: 12+ with TimescaleDB extension for time-series data
+- **Redis**: 6.0+ for caching and session management
+
+### Optional
+- **Docker**: For containerized deployment
+- **Kubernetes**: 1.20+ for orchestration
+- **Make**: For build automation
 
 ## Installation
 
