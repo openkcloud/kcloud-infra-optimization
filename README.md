@@ -74,25 +74,12 @@ core 스케줄러 ← Heat Templates ← Nova/Neutron/Cinder
 
 ## 클러스터 타입별 전략
 
-### **GPU-Intensive 클러스터**
-- **구성**: NVIDIA GPU 노드 + 고성능 CPU
-- **용도**: ML 훈련, 딥러닝 모델 개발
-- **최적화**: 전력 효율성 + GPU 활용률
-
-### **NPU-Optimized 클러스터**  
-- **구성**: Intel/AMD NPU 노드 + 저전력 CPU
-- **용도**: AI 추론, 실시간 처리
-- **최적화**: 응답 시간 + 처리량
-
-### **Hybrid-Balanced 클러스터**
-- **구성**: GPU + NPU + CPU 혼합
-- **용도**: 복합 AI 워크로드
-- **최적화**: 자원 활용률 + 유연성
-
-### **CPU-Only 클러스터**
-- **구성**: CPU 전용
-- **용도**: 일반 서비스, 데이터 처리
-- **최적화**: 비용 최소화
+| Cluster Type | Configuration | Use Cases | Optimization Focus |
+|--------------|---------------|-----------|-------------------|
+| **GPU-Intensive** | NVIDIA GPU + High-performance CPU | ML training, Deep learning | Power efficiency + GPU utilization |
+| **NPU-Optimized** | Intel/AMD NPU + Low-power CPU | AI inference, Real-time processing | Response time + Throughput |
+| **Hybrid-Balanced** | GPU + NPU + CPU mix | Complex AI workloads | Resource utilization + Flexibility |
+| **CPU-Only** | CPU dedicated | General services, Data processing | Cost minimization |
 
 ## 핵심 기능
 
