@@ -2,6 +2,10 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+**Multi-cluster management module for AI workload orchestration**
+
+An intelligent infrastructure management system that dynamically creates and manages Kubernetes clusters on OpenStack Magnum, optimized for AI/ML workloads with GPU/NPU acceleration.
+
 **멀티 클러스터 관리 모듈**
 
 ## 주요 기능
