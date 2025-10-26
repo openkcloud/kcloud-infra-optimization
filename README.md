@@ -314,21 +314,36 @@ print(f"클러스터 상태: {status.phase}, 노드: {status.node_count}")
 
 ## 배포
 
+### Local Development
 ```bash
-# 로컬 개발
 make install
 make test
 make run
+```
 
-# OpenStack 환경 설정 확인
-make verify-openstack
+### Docker Deployment
+```bash
+# Build Docker image
+docker build -t kcloud-infra:latest -f Dockerfile .
 
-# Docker 실행  
-make docker-build
-make docker-run
+# Run with environment variables
+docker run -d \
+  --name kcloud-infra \
+  --env-file .env \
+  -p 8000:8000 \
+  kcloud-infra:latest
+```
 
-# K8s 배포
+### Kubernetes Deployment
+```bash
+# Create namespace
+kubectl create namespace kcloud
+
+# Apply configuration
 kubectl apply -f deployment/infrastructure.yaml
+
+# Verify deployment
+kubectl get pods -n kcloud
 ```
 
 ## 보안
