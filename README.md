@@ -9,6 +9,24 @@ An intelligent infrastructure management system that dynamically creates and man
 
 **멀티 클러스터 관리 모듈**
 
+## Project Structure
+
+```
+kcloud-intra-reconfiguration/
+├── cluster_api.py              # Cluster API endpoints
+├── cluster_group_orchestrator.py  # Cluster group orchestration
+├── virtual_cluster_group_manager.py  # Virtual cluster management
+├── virtual_cluster_monitoring.py  # Monitoring dashboard
+├── openstack_cluster_crud.py   # OpenStack cluster CRUD operations
+├── database/                   # Database connection and schema
+│   └── connection.py          # PostgreSQL and Redis connections
+├── monitoring/                 # Monitoring configuration
+│   └── config.py              # OpenStack and monitoring config
+├── requirements.txt            # Python dependencies
+├── .env.example               # Environment variables template
+└── LICENSE                    # Apache 2.0 License
+```
+
 ## 주요 기능
 
 ### Magnum 클러스터 관리
