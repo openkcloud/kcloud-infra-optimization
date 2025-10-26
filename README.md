@@ -302,3 +302,17 @@ kubectl apply -f deployment/infrastructure.yaml
 - **RBAC**: 클러스터별 역할 기반 접근 제어
 - **네트워크 격리**: Neutron을 통한 클러스터 간 네트워크 분리
 - **시크릿 관리**: 클러스터 인증서 및 키 보안 저장
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'feat: add some amazing feature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
