@@ -17,27 +17,64 @@ An intelligent infrastructure management system that dynamically creates and man
 ## Project Structure
 
 ```
-kcloud-infra-reconfiguration/
-├── cluster_api.py              # Cluster API endpoints
-├── cluster_group_orchestrator.py  # Cluster group orchestration
-├── virtual_cluster_group_manager.py  # Virtual cluster management
-├── virtual_cluster_monitoring.py  # Monitoring dashboard
-├── openstack_cluster_crud.py   # OpenStack cluster CRUD operations
+kcloud-infra-optimization/
+├── src/                        # Application source code
+│   └── main.py                # FastAPI application entry point
 ├── database/                   # Database connection and schema
-│   └── connection.py          # PostgreSQL and Redis connections
-├── monitoring/                 # Monitoring configuration
-│   └── config.py              # OpenStack and monitoring config
-├── requirements.txt            # Python dependencies
-├── .env.example               # Environment variables template
-└── LICENSE                    # Apache 2.0 License
+│   ├── connection.py          # PostgreSQL and Redis connections
+│   └── redis_keys.py          # Redis key management
+├── monitoring/                 # Monitoring and metrics
+│   ├── config.py              # OpenStack and monitoring config
+│   ├── metrics_collector.py  # Metrics collection
+│   └── alert_system.py        # Alert management
+├── k8s/                       # Kubernetes manifests
+│   ├── base/                  # Base Kubernetes resources
+│   │   ├── deployment.yaml   # Deployment configuration
+│   │   ├── service.yaml      # Service configuration
+│   │   ├── ingress.yaml      # Ingress configuration
+│   │   ├── configmap.yaml    # Configuration
+│   │   ├── secret.yaml       # Secrets template
+│   │   └── kustomization.yaml # Kustomize base
+│   └── overlays/              # Environment-specific configs
+│       ├── development/       # Development environment
+│       └── production/        # Production environment
+├── .github/                   # GitHub Actions CI/CD
+│   └── workflows/
+│       └── ci.yaml           # CI/CD pipeline
+├── Dockerfile                 # Multi-stage Docker build
+├── Makefile                   # Development commands
+├── requirements.txt           # Python dependencies
+├── .env.example              # Environment variables template
+├── .dockerignore             # Docker build optimization
+└── LICENSE                   # Apache 2.0 License
 ```
 
 ## Quick Start
 
+### Using Make (Recommended)
+
+```bash
+# Clone repository
+git clone https://github.com/yourusername/kcloud-infra-optimization.git
+cd kcloud-infra-optimization
+
+# Install dependencies
+make install
+
+# Setup environment
+make setup-env
+# Edit .env with your credentials
+
+# Run locally
+make run
+```
+
+### Manual Setup
+
 ```bash
 # Clone and install
-git clone https://github.com/yourusername/kcloud-infra-reconfiguration.git
-cd kcloud-infra-reconfiguration
+git clone https://github.com/yourusername/kcloud-infra-optimization.git
+cd kcloud-infra-optimization
 pip install -r requirements.txt
 
 # Configure environment
@@ -45,7 +82,19 @@ cp .env.example .env
 # Edit .env with your credentials
 
 # Run the application
-python src/main.py
+python -m uvicorn src.main:app --host 0.0.0.0 --port 8006
+```
+
+### Using Docker
+
+```bash
+# Build and run with Make
+make docker-build
+make docker-run
+
+# Or use Docker directly
+docker build -t kcloud-infra:latest .
+docker run -d --env-file .env -p 8006:8006 kcloud-infra:latest
 ```
 
 ## 주요 기능
@@ -338,15 +387,62 @@ docker run -d \
 ```
 
 ### Kubernetes Deployment
+
+#### Using Kustomize (Recommended)
+
 ```bash
 # Create namespace
-kubectl create namespace kcloud
+kubectl create namespace kcloud-dev
 
-# Apply configuration
-kubectl apply -f deployment/infrastructure.yaml
+# Deploy to development
+kubectl apply -k k8s/overlays/development
 
 # Verify deployment
-kubectl get pods -n kcloud
+kubectl get pods -n kcloud-dev
+kubectl get svc -n kcloud-dev
+
+# Check logs
+kubectl logs -n kcloud-dev -l app=kcloud-infra -f
+```
+
+#### Production Deployment
+
+```bash
+# Create production namespace
+kubectl create namespace kcloud-prod
+
+# Update secrets first
+kubectl create secret generic kcloud-infra-secrets \
+  --from-literal=OS_PASSWORD='your-password' \
+  --from-literal=POSTGRES_PASSWORD='your-db-password' \
+  -n kcloud-prod
+
+# Deploy to production
+kubectl apply -k k8s/overlays/production
+
+# Verify deployment
+kubectl get all -n kcloud-prod
+```
+
+#### Using Makefile
+
+```bash
+# Validate manifests
+make k8s-validate
+
+# Deploy to development
+make k8s-dev
+
+# Deploy to production
+make k8s-prod
+
+# Check status
+make k8s-status-dev
+make k8s-status-prod
+
+# View logs
+make k8s-logs-dev
+make k8s-logs-prod
 ```
 
 ## 보안
