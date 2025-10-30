@@ -24,6 +24,7 @@ images:
 
 patchesStrategicMerge:
 - deployment-patch.yaml
+- hpa-patch.yaml
 
 configMapGenerator:
 - name: kcloud-infra-config
