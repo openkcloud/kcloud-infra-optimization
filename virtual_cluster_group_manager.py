@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-kcloud-opt 가상 클러스터 그룹 관리
-여러 물리 클러스터를 논리적으로 그룹화하여 관리
+kcloud-opt virtual cluster group management
+Manage multiple physical clusters as logical groups
 """
 
 import sys
@@ -16,7 +16,7 @@ from keystoneauth1 import loading, session
 import openstack
 
 class VirtualClusterGroup:
-    """가상 클러스터 그룹 클래스"""
+    """Virtual cluster group class"""
     
     def __init__(self, name: str, group_type: str, policy: Dict):
         self.name = name
@@ -28,23 +28,23 @@ class VirtualClusterGroup:
         self.total_cost = 0.0
         
     def add_cluster(self, cluster_info: Dict):
-        """클러스터를 그룹에 추가"""
+        """Add a cluster to the group"""
         self.clusters.append(cluster_info)
         self.total_nodes += cluster_info.get('node_count', 0)
         self.total_cost += cluster_info.get('hourly_cost', 0)
         
     def remove_cluster(self, cluster_name: str):
-        """그룹에서 클러스터 제거"""
+        """Remove a cluster from the group"""
         self.clusters = [c for c in self.clusters if c['name'] != cluster_name]
         self._recalculate_totals()
         
     def _recalculate_totals(self):
-        """총합 재계산"""
+        """Recalculate aggregated totals"""
         self.total_nodes = sum(c.get('node_count', 0) for c in self.clusters)
         self.total_cost = sum(c.get('hourly_cost', 0) for c in self.clusters)
         
     def get_status(self):
-        """그룹 상태 반환"""
+        """Return group status"""
         return {
             'name': self.name,
             'group_type': self.group_type,
@@ -57,7 +57,7 @@ class VirtualClusterGroup:
         }
 
 class VirtualClusterGroupManager:
-    """가상 클러스터 그룹 관리자"""
+    """Virtual cluster group manager"""
     
     def __init__(self):
         self.auth_config = {
@@ -69,10 +69,10 @@ class VirtualClusterGroupManager:
             'user_domain_name': 'Default'
         }
         self.setup_clients()
-        self.virtual_groups = {}  # 가상 그룹 저장
+        self.virtual_groups = {}  # store virtual groups
         
     def setup_clients(self):
-        """OpenStack 클라이언트 초기화"""
+        """Initialize OpenStack clients"""
         loader = loading.get_plugin_loader('password')
         auth = loader.load_from_options(**self.auth_config)
         sess = session.Session(auth=auth)
@@ -82,12 +82,12 @@ class VirtualClusterGroupManager:
     
     def create_virtual_group(self, name: str, group_type: str, policy: Dict) -> VirtualClusterGroup:
         """
-        가상 클러스터 그룹 생성
+        Create a virtual cluster group
         
         Args:
-            name: 그룹 이름
+            name: group name
             group_type: "ml_training", "ai_inference", "mixed", "development"
-            policy: 정책 설정
+            policy: policy configuration
         """
         print(f"🌐 가상 클러스터 그룹 생성: {name} ({group_type})")
         
@@ -103,15 +103,15 @@ class VirtualClusterGroupManager:
     
     def create_group_with_clusters(self, group_name: str, group_config: Dict) -> VirtualClusterGroup:
         """
-        설정에 따라 가상 그룹과 클러스터들을 함께 생성
+        Create a virtual group and clusters together based on configuration
         
         Args:
-            group_name: 그룹 이름
-            group_config: 그룹 설정
+            group_name: group name
+            group_config: group configuration
         """
         print(f"🚀 가상 그룹 '{group_name}' 및 클러스터들 생성 시작")
         
-        # 가상 그룹 생성
+        # create virtual group
         group = self.create_virtual_group(
             group_name,
             group_config['type'],
@@ -121,20 +121,20 @@ class VirtualClusterGroupManager:
         if not group:
             return None
         
-        # 설정된 클러스터들 생성
+        # create configured clusters
         for cluster_spec in group_config.get('clusters', []):
             cluster_name = f"{group_name}-{cluster_spec['name']}"
             
             print(f"  📦 클러스터 생성 중: {cluster_name}")
             
-            # 실제 Magnum 클러스터 생성
+            # create actual Magnum cluster
             magnum_cluster = self._create_magnum_cluster(
                 cluster_name,
                 cluster_spec
             )
             
             if magnum_cluster:
-                # 그룹에 클러스터 정보 추가
+                # add cluster information to group
                 cluster_info = {
                     'name': cluster_name,
                     'uuid': magnum_cluster.uuid,
@@ -155,7 +155,7 @@ class VirtualClusterGroupManager:
         return group
     
     def _create_magnum_cluster(self, name: str, spec: Dict):
-        """실제 Magnum 클러스터 생성"""
+        """Create actual Magnum cluster"""
         try:
             cluster_spec = {
                 'name': name,
@@ -176,7 +176,7 @@ class VirtualClusterGroupManager:
             return None
     
     def _estimate_cluster_cost(self, spec: Dict) -> float:
-        """클러스터 예상 비용 계산"""
+        """Estimate cluster hourly cost"""
         cost_map = {
             'ai-k8s-template': 1.20,  # GPU 노드 포함
             'dev-k8s-template': 0.15,
@@ -201,22 +201,22 @@ class VirtualClusterGroupManager:
         target_nodes = scaling_policy.get('target_total_nodes', group.total_nodes)
         
         if scaling_type == 'horizontal':
-            # 수평적 스케일링: 노드 수 조정
+            # horizontal scaling: adjust node count
             current_total = sum(c.get('node_count', 0) for c in group.clusters)
             if target_nodes > current_total:
-                # 스케일 아웃
+                # scale out
                 self._scale_out_group(group, target_nodes - current_total)
             elif target_nodes < current_total:
-                # 스케일 인
+                # scale in
                 self._scale_in_group(group, current_total - target_nodes)
         
         return True
     
     def _scale_out_group(self, group: VirtualClusterGroup, additional_nodes: int):
-        """그룹 스케일 아웃"""
+        """Scale out the group"""
         print(f"📈 스케일 아웃: {additional_nodes}개 노드 추가")
         
-        # 기존 클러스터들에 균등 분배
+        # evenly distribute across existing clusters
         clusters = [c for c in group.clusters if c.get('status') == 'CREATE_COMPLETE']
         if not clusters:
             print("❌ 활성 클러스터가 없어 스케일링 불가")
@@ -241,7 +241,7 @@ class VirtualClusterGroupManager:
         """그룹 스케일 인"""
         print(f"📉 스케일 인: {reduce_nodes}개 노드 제거")
         
-        # 비용 효율성 기준으로 노드 제거
+        # remove nodes based on cost efficiency
         clusters = sorted(group.clusters, 
                          key=lambda x: x.get('hourly_cost', 0) / max(x.get('node_count', 1), 1),
                          reverse=True)
@@ -252,7 +252,7 @@ class VirtualClusterGroupManager:
                 break
                 
             current_nodes = cluster['node_count']
-            if current_nodes > 1:  # 최소 1개 노드 유지
+            if current_nodes > 1:  # keep at least 1 node
                 reduce_from_this = min(remaining_reduce, current_nodes - 1)
                 new_count = current_nodes - reduce_from_this
                 
@@ -263,7 +263,7 @@ class VirtualClusterGroupManager:
         group._recalculate_totals()
     
     def _scale_magnum_cluster(self, cluster_name: str, new_node_count: int):
-        """실제 Magnum 클러스터 스케일링"""
+        """Scale a Magnum cluster"""
         try:
             cluster = self.magnum.clusters.get(cluster_name)
             update_ops = [{'op': 'replace', 'path': '/node_count', 'value': new_node_count}]
@@ -273,13 +273,13 @@ class VirtualClusterGroupManager:
             print(f"  ❌ 클러스터 '{cluster_name}' 스케일링 실패: {e}")
     
     def get_group_status(self, group_name: str):
-        """그룹 상태 반환"""
+        """Return group status"""
         if group_name not in self.virtual_groups:
             return None
         
         group = self.virtual_groups[group_name]
         
-        # 실제 클러스터 상태 업데이트
+        # update actual cluster status
         for cluster_info in group.clusters:
             try:
                 magnum_cluster = self.magnum.clusters.get(cluster_info['name'])
@@ -292,7 +292,7 @@ class VirtualClusterGroupManager:
         return group.get_status()
     
     def list_virtual_groups(self):
-        """모든 가상 그룹 목록"""
+        """List all virtual groups"""
         print(f"📊 가상 클러스터 그룹 목록 ({len(self.virtual_groups)}개)")
         
         for group_name, group in self.virtual_groups.items():
