@@ -11,6 +11,9 @@ commonLabels:
 bases:
 - ../../base
 
+resources:
+- namespace.yaml
+
 replicas:
 - name: kcloud-infra
   count: 3
