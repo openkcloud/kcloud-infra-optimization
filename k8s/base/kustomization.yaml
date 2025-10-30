@@ -17,6 +17,8 @@ resources:
 - service.yaml
 - ingress.yaml
 - hpa.yaml
+- servicemonitor.yaml
+- prometheusrule.yaml
 
 images:
 - name: kcloud-infra
