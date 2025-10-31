@@ -53,13 +53,13 @@ class RealTimeDashboard:
     def get_status_indicator(self, status: str) -> str:
         """
         indicators = {
-            'CREATE_COMPLETE': '🟢',
-            'CREATE_IN_PROGRESS': '🟡',
-            'CREATE_FAILED': '🔴',
-            'DELETE_IN_PROGRESS': '🟠',
-            'ERROR': '⚠️'
+            'CREATE_COMPLETE': '[OK]',
+            'CREATE_IN_PROGRESS': '[IN_PROGRESS]',
+            'CREATE_FAILED': '[FAILED]',
+            'DELETE_IN_PROGRESS': '[DELETING]',
+            'ERROR': '[ERROR]'
         }
-        return indicators.get(status, '❓')
+        return indicators.get(status, '[UNKNOWN]')
     
     def format_cost(self, cost: float) -> str:
         """
@@ -223,12 +223,12 @@ def main():
     """
     import argparse
     
-    parser = argparse.ArgumentParser(description='kcloud-opt 실시간 모니터링 대시보드')
-    parser.add_argument('--interval', type=int, default=15, help='업데이트 주기(초)')
+    parser = argparse.ArgumentParser(description='kcloud-opt real-time monitoring dashboard')
+    parser.add_argument('--interval', type=int, default=15, help='update interval (seconds)')
     parser.add_argument('--clusters', nargs='+', default=['kcloud-ai-cluster-v2'],
-                       help='모니터링할 클러스터 이름들')
+                       help='cluster names to monitor')
     parser.add_argument('--mode', choices=['dashboard', 'once'], default='dashboard',
-                       help='실행 모드 (dashboard: 실시간, once: 1회만)')
+                       help='run mode (dashboard: real-time, once: single run)')
     
     args = parser.parse_args()
     
@@ -240,7 +240,7 @@ def main():
 
         summary = dashboard.get_metrics_summary(args.clusters)
         
-        print(" 현재 클러스터 상태 요약")
+        print(" Current Cluster Status Summary")
         print("=" * 40)
         
         for cluster_name, metrics in summary['clusters'].items():
@@ -248,16 +248,16 @@ def main():
                 print(f"[ERROR] {cluster_name}: {metrics['error']}")
             else:
                 print(f" {cluster_name}")
-                print(f"  상태: {metrics['status']}")
-                print(f"  비용: ${metrics['cost_per_hour']:.2f}/시간")
-                print(f"  전력: {metrics['power_consumption_watts']:.0f}W")
-                print(f"  헬스: {metrics['health_score']:.1f}/100")
+                print(f"  status: {metrics['status']}")
+                print(f"  cost: ${metrics['cost_per_hour']:.2f}/hour")
+                print(f"  power: {metrics['power_consumption_watts']:.0f}W")
+                print(f"  health: {metrics['health_score']:.1f}/100")
                 print()
         
         totals = summary['totals']
-        print(f" 총 비용: ${totals['cost_per_hour']:.2f}/시간")
-        print(f" 총 전력: {totals['power_consumption']:.0f}W")
-        print(f" 활성 클러스터: {totals['active_clusters']}/{totals['total_clusters']}개")
+        print(f" total cost: ${totals['cost_per_hour']:.2f}/hour")
+        print(f" total power: {totals['power_consumption']:.0f}W")
+        print(f" active clusters: {totals['active_clusters']}/{totals['total_clusters']}")
 
 if __name__ == "__main__":
     main()
