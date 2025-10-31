@@ -1,32 +1,26 @@
 #!/usr/bin/env python3
 """
-테스트 클러스터 생성 및 모니터링
 """
-
 import os
 import time
 import json
 from datetime import datetime
-
-# 환경 변수 설정
 os.environ['OS_CLIENT_CONFIG_FILE'] = '/root/kcloud_opt/clouds.yaml'
-
 from openstack_cluster_crud import OpenStackClusterCRUD, ClusterConfig
-
-
 def create_test_cluster():
-    """테스트 클러스터 생성"""
+"""
+    """
     print("Creating test cluster...")
     
     crud = OpenStackClusterCRUD()
     
-    # 사용 가능한 템플릿 확인
+
     print("\nAvailable templates:")
     templates = crud.get_cluster_templates()
     for i, tmpl in enumerate(templates):
         print(f"  {i+1}. {tmpl['name']} (ID: {tmpl['id']})")
     
-    # 가장 작은 템플릿 선택 (dev-k8s-template)
+
     template_id = None
     for tmpl in templates:
         if 'dev' in tmpl['name'].lower():
@@ -34,22 +28,22 @@ def create_test_cluster():
             break
     
     if not template_id:
-        template_id = templates[0]['id']  # 첫 번째 템플릿 사용
+        template_id = templates[0]['id']
     
     print(f"Selected template: {template_id}")
     
-    # 클러스터 설정
+
     cluster_name = f"test-demo-{datetime.now().strftime('%m%d-%H%M')}"
     
     config = ClusterConfig(
         name=cluster_name,
         cluster_template_id=template_id,
         master_count=1,
-        node_count=1,  # 최소 구성
+        node_count=1,
         fixed_network="cloud-platform-selfservice",
         fixed_subnet="cloud-platform-selfservice-subnet",
         labels={
-            "kube_dashboard_enabled": "false",  # 빠른 생성을 위해
+            "kube_dashboard_enabled": "false",
             "prometheus_monitoring": "false",
             "auto_scaling_enabled": "false"
         }
@@ -62,7 +56,7 @@ def create_test_cluster():
     print(f"  Workers: {config.node_count}")
     print(f"  Network: {config.fixed_network}")
     
-    # 생성 시작
+
     try:
         print(f"\nStarting cluster creation...")
         start_time = time.time()
@@ -83,7 +77,7 @@ def create_test_cluster():
 
 
 def monitor_cluster_creation(cluster_id):
-    """클러스터 생성 진행 상황 모니터링"""
+    """
     print(f"\nMonitoring cluster creation: {cluster_id}")
     
     crud = OpenStackClusterCRUD()
@@ -99,7 +93,7 @@ def monitor_cluster_creation(cluster_id):
             
             print(f"  [{check_count:2d}] {elapsed/60:.1f}min - Status: {cluster.status}")
             
-            # 완료 상태 체크
+
             if cluster.status in ["CREATE_COMPLETE"]:
                 print(f"\nCluster creation completed!")
                 print(f"  API Address: {cluster.api_address}")
@@ -111,12 +105,12 @@ def monitor_cluster_creation(cluster_id):
                 print(f"\nCluster creation failed: {cluster.status}")
                 break
                 
-            # 너무 오래 걸리면 중단
-            if elapsed > 3600:  # 1시간
+
+            if elapsed > 3600:
                 print(f"\nTimeout after 1 hour")
                 break
                 
-            time.sleep(30)  # 30초마다 체크
+            time.sleep(30)
             
         except Exception as e:
             print(f"  Error checking status: {e}")
@@ -124,7 +118,7 @@ def monitor_cluster_creation(cluster_id):
 
 
 def list_all_clusters():
-    """모든 클러스터 목록 조회"""
+    """
     print("\nCurrent clusters:")
     
     crud = OpenStackClusterCRUD()
@@ -156,12 +150,12 @@ if __name__ == "__main__":
     print(" OpenStack Cluster Creation Test")
     print("="*60)
     
-    # 현재 클러스터 상태 확인
+
     list_all_clusters()
     
-    # 사용자 선택
+
     if len(sys.argv) > 1 and sys.argv[1] == "--create":
-        # 새 클러스터 생성
+
         cluster = create_test_cluster()
         
         if cluster:
@@ -169,7 +163,7 @@ if __name__ == "__main__":
             print(f"   python create_test_cluster.py --monitor {cluster.id}")
             
     elif len(sys.argv) > 2 and sys.argv[1] == "--monitor":
-        # 클러스터 모니터링
+
         cluster_id = sys.argv[2]
         monitor_cluster_creation(cluster_id)
         
