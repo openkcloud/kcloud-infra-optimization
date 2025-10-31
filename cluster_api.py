@@ -120,16 +120,16 @@ async def startup_event():
     global crud_controller
     try:
         crud_controller = OpenStackClusterCRUD(cloud_name="openstack")
-        print("✅ Connected to OpenStack")
+        print("Connected to OpenStack")
     except Exception as e:
-        print(f"❌ Failed to connect to OpenStack: {e}")
+        print(f"Failed to connect to OpenStack: {e}")
         raise
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """앱 종료 시 정리"""
-    print("👋 Shutting down API server")
+    print("Shutting down API server")
 
 
 # ============= Health Check =============

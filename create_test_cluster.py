@@ -16,12 +16,12 @@ from openstack_cluster_crud import OpenStackClusterCRUD, ClusterConfig
 
 def create_test_cluster():
     """테스트 클러스터 생성"""
-    print("🚀 Creating test cluster...")
+    print("Creating test cluster...")
     
     crud = OpenStackClusterCRUD()
     
     # 사용 가능한 템플릿 확인
-    print("\n📋 Available templates:")
+    print("\nAvailable templates:")
     templates = crud.get_cluster_templates()
     for i, tmpl in enumerate(templates):
         print(f"  {i+1}. {tmpl['name']} (ID: {tmpl['id']})")
@@ -36,7 +36,7 @@ def create_test_cluster():
     if not template_id:
         template_id = templates[0]['id']  # 첫 번째 템플릿 사용
     
-    print(f"✅ Selected template: {template_id}")
+    print(f"Selected template: {template_id}")
     
     # 클러스터 설정
     cluster_name = f"test-demo-{datetime.now().strftime('%m%d-%H%M')}"
@@ -55,7 +55,7 @@ def create_test_cluster():
         }
     )
     
-    print(f"\n📝 Cluster configuration:")
+    print(f"\nCluster configuration:")
     print(f"  Name: {cluster_name}")
     print(f"  Template: {template_id}")
     print(f"  Masters: {config.master_count}")
@@ -64,13 +64,13 @@ def create_test_cluster():
     
     # 생성 시작
     try:
-        print(f"\n🔄 Starting cluster creation...")
+        print(f"\nStarting cluster creation...")
         start_time = time.time()
         
         cluster = crud.create_cluster(config)
         
         elapsed = time.time() - start_time
-        print(f"\n✅ Cluster created successfully in {elapsed:.1f} seconds!")
+        print(f"\nCluster created successfully in {elapsed:.1f} seconds!")
         print(f"  ID: {cluster.id}")
         print(f"  Name: {cluster.name}")
         print(f"  Status: {cluster.status}")
@@ -78,13 +78,13 @@ def create_test_cluster():
         return cluster
         
     except Exception as e:
-        print(f"\n❌ Failed to create cluster: {e}")
+        print(f"\nFailed to create cluster: {e}")
         return None
 
 
 def monitor_cluster_creation(cluster_id):
     """클러스터 생성 진행 상황 모니터링"""
-    print(f"\n👀 Monitoring cluster creation: {cluster_id}")
+    print(f"\nMonitoring cluster creation: {cluster_id}")
     
     crud = OpenStackClusterCRUD()
     
@@ -101,19 +101,19 @@ def monitor_cluster_creation(cluster_id):
             
             # 완료 상태 체크
             if cluster.status in ["CREATE_COMPLETE"]:
-                print(f"\n🎉 Cluster creation completed!")
+                print(f"\nCluster creation completed!")
                 print(f"  API Address: {cluster.api_address}")
                 print(f"  Master Addresses: {cluster.master_addresses}")
                 print(f"  Node Addresses: {cluster.node_addresses}")
                 break
                 
             elif "FAILED" in cluster.status or "ERROR" in cluster.status:
-                print(f"\n❌ Cluster creation failed: {cluster.status}")
+                print(f"\nCluster creation failed: {cluster.status}")
                 break
                 
             # 너무 오래 걸리면 중단
             if elapsed > 3600:  # 1시간
-                print(f"\n⏰ Timeout after 1 hour")
+                print(f"\nTimeout after 1 hour")
                 break
                 
             time.sleep(30)  # 30초마다 체크
@@ -125,7 +125,7 @@ def monitor_cluster_creation(cluster_id):
 
 def list_all_clusters():
     """모든 클러스터 목록 조회"""
-    print("\n📊 Current clusters:")
+    print("\nCurrent clusters:")
     
     crud = OpenStackClusterCRUD()
     
@@ -138,7 +138,7 @@ def list_all_clusters():
             
         for cluster in clusters:
             age_str = cluster.created_at
-            print(f"  • {cluster.name}")
+            print(f"  - {cluster.name}")
             print(f"    ID: {cluster.id}")
             print(f"    Status: {cluster.status}")
             print(f"    Nodes: {cluster.master_count}M + {cluster.node_count}W")
@@ -165,7 +165,7 @@ if __name__ == "__main__":
         cluster = create_test_cluster()
         
         if cluster:
-            print(f"\n💡 To monitor progress, run:")
+            print(f"\nTo monitor progress, run:")
             print(f"   python create_test_cluster.py --monitor {cluster.id}")
             
     elif len(sys.argv) > 2 and sys.argv[1] == "--monitor":
@@ -174,7 +174,7 @@ if __name__ == "__main__":
         monitor_cluster_creation(cluster_id)
         
     else:
-        print("\n💡 Usage:")
+        print("\nUsage:")
         print("  python create_test_cluster.py                    # List clusters")
         print("  python create_test_cluster.py --create          # Create new cluster")
         print("  python create_test_cluster.py --monitor <ID>    # Monitor cluster")

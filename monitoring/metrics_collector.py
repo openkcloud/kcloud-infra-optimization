@@ -97,7 +97,7 @@ class MetricsCollector:
             logger.info("✅ OpenStack 클라이언트 초기화 완료")
             
         except Exception as e:
-            logger.error(f"❌ OpenStack 클라이언트 초기화 실패: {e}")
+            logger.error(f"[ERROR] OpenStack 클라이언트 초기화 실패: {e}")
             raise
     
     def collect_cluster_basic_info(self, cluster_name: str) -> ClusterMetrics:
@@ -116,11 +116,11 @@ class MetricsCollector:
                 api_address=cluster.api_address
             )
             
-            logger.info(f"📊 기본 정보 수집 완료: {cluster_name}")
+            logger.info(f" 기본 정보 수집 완료: {cluster_name}")
             return metrics
             
         except Exception as e:
-            logger.error(f"❌ 클러스터 '{cluster_name}' 기본 정보 수집 실패: {e}")
+            logger.error(f"[ERROR] 클러스터 '{cluster_name}' 기본 정보 수집 실패: {e}")
             
             # 오류 시 기본 메트릭 반환
             return ClusterMetrics(
@@ -170,10 +170,10 @@ class MetricsCollector:
             metrics.failed_pods = random.randint(0, 2)
             metrics.pending_pods = random.randint(0, 5)
             
-            logger.info(f"📈 리소스 메트릭 수집 완료: {metrics.cluster_name}")
+            logger.info(f" 리소스 메트릭 수집 완료: {metrics.cluster_name}")
             
         except Exception as e:
-            logger.warning(f"⚠️ 리소스 메트릭 수집 실패: {e}")
+            logger.warning(f"[WARNING] 리소스 메트릭 수집 실패: {e}")
         
         return metrics
     
@@ -210,10 +210,10 @@ class MetricsCollector:
             metrics.cost_per_hour = power_cost_per_hour + infrastructure_cost_per_hour
             metrics.estimated_monthly_cost = metrics.cost_per_hour * 24 * 30
             
-            logger.info(f"💰 비용 계산 완료: {metrics.cluster_name} - ${metrics.cost_per_hour:.2f}/시간")
+            logger.info(f" 비용 계산 완료: {metrics.cluster_name} - ${metrics.cost_per_hour:.2f}/시간")
             
         except Exception as e:
-            logger.warning(f"⚠️ 전력/비용 계산 실패: {e}")
+            logger.warning(f"[WARNING] 전력/비용 계산 실패: {e}")
         
         return metrics
     
@@ -262,10 +262,10 @@ class MetricsCollector:
             else:
                 metrics.efficiency_score = 0.0
             
-            logger.info(f"📊 점수 계산 완료: {metrics.cluster_name} - 헬스:{metrics.health_score:.1f}, 효율성:{metrics.efficiency_score:.1f}")
+            logger.info(f" 점수 계산 완료: {metrics.cluster_name} - 헬스:{metrics.health_score:.1f}, 효율성:{metrics.efficiency_score:.1f}")
             
         except Exception as e:
-            logger.warning(f"⚠️ 점수 계산 실패: {e}")
+            logger.warning(f"[WARNING] 점수 계산 실패: {e}")
             metrics.health_score = 0.0
             metrics.efficiency_score = 0.0
         
@@ -273,7 +273,7 @@ class MetricsCollector:
     
     def collect_full_metrics(self, cluster_name: str) -> ClusterMetrics:
         """전체 메트릭 수집"""
-        logger.info(f"🔍 전체 메트릭 수집 시작: {cluster_name}")
+        logger.info(f" 전체 메트릭 수집 시작: {cluster_name}")
         
         # 1. 기본 정보 수집
         metrics = self.collect_cluster_basic_info(cluster_name)
@@ -287,12 +287,12 @@ class MetricsCollector:
         # 4. 점수 계산
         metrics = self.calculate_scores(metrics)
         
-        logger.info(f"✅ 전체 메트릭 수집 완료: {cluster_name}")
+        logger.info(f"[OK] 전체 메트릭 수집 완료: {cluster_name}")
         return metrics
     
     def collect_multiple_clusters(self, cluster_names: List[str]) -> List[ClusterMetrics]:
         """여러 클러스터 메트릭 동시 수집"""
-        logger.info(f"🔍 다중 클러스터 메트릭 수집: {len(cluster_names)}개")
+        logger.info(f" 다중 클러스터 메트릭 수집: {len(cluster_names)}개")
         
         metrics_list = []
         for cluster_name in cluster_names:
@@ -300,9 +300,9 @@ class MetricsCollector:
                 metrics = self.collect_full_metrics(cluster_name)
                 metrics_list.append(metrics)
             except Exception as e:
-                logger.error(f"❌ 클러스터 '{cluster_name}' 메트릭 수집 실패: {e}")
+                logger.error(f"[ERROR] 클러스터 '{cluster_name}' 메트릭 수집 실패: {e}")
         
-        logger.info(f"✅ 다중 클러스터 메트릭 수집 완료: {len(metrics_list)}/{len(cluster_names)}")
+        logger.info(f"[OK] 다중 클러스터 메트릭 수집 완료: {len(metrics_list)}/{len(cluster_names)}")
         return metrics_list
     
     def save_metrics(self, metrics: ClusterMetrics, filename: Optional[str] = None):
@@ -315,14 +315,14 @@ class MetricsCollector:
             with open(filename, 'w') as f:
                 json.dump(metrics.to_dict(), f, indent=2)
             
-            logger.info(f"💾 메트릭 저장 완료: {filename}")
+            logger.info(f" 메트릭 저장 완료: {filename}")
             
         except Exception as e:
-            logger.error(f"❌ 메트릭 저장 실패: {e}")
+            logger.error(f"[ERROR] 메트릭 저장 실패: {e}")
 
 def main():
     """테스트 실행"""
-    print("🚀 클러스터 메트릭 수집기 테스트")
+    print(" 클러스터 메트릭 수집기 테스트")
     print("=" * 50)
     
     collector = MetricsCollector()
@@ -330,12 +330,12 @@ def main():
     # 현재 생성 중인 클러스터 테스트
     test_cluster = "kcloud-ai-cluster-v2"
     
-    print(f"\n🔍 클러스터 '{test_cluster}' 메트릭 수집 중...")
+    print(f"\n 클러스터 '{test_cluster}' 메트릭 수집 중...")
     
     try:
         metrics = collector.collect_full_metrics(test_cluster)
         
-        print(f"\n📊 수집된 메트릭:")
+        print(f"\n 수집된 메트릭:")
         print(f"  클러스터: {metrics.cluster_name}")
         print(f"  상태: {metrics.status}")
         print(f"  노드 수: {metrics.node_count}개")
@@ -350,10 +350,10 @@ def main():
         # 파일로 저장
         collector.save_metrics(metrics)
         
-        print(f"\n✅ 메트릭 수집 테스트 완료")
+        print(f"\n[OK] 메트릭 수집 테스트 완료")
         
     except Exception as e:
-        print(f"❌ 테스트 실패: {e}")
+        print(f"[ERROR] 테스트 실패: {e}")
 
 if __name__ == "__main__":
     main()

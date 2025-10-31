@@ -82,7 +82,7 @@ class EnhancedAlertSystem:
             await self._setup_notification_handlers()
             logger.info("✅ 향상된 알림 시스템 초기화 완료")
         except Exception as e:
-            logger.error(f"❌ 알림 시스템 초기화 실패: {e}")
+            logger.error(f"[ERROR] 알림 시스템 초기화 실패: {e}")
             # 기존 시스템으로 폴백
             self.base_system.setup_default_rules()
     
@@ -116,7 +116,7 @@ class EnhancedAlertSystem:
                 }
             
             self.last_rules_reload = datetime.now()
-            logger.info(f"📋 알림 규칙 로드 완료: {len(self.alert_rules_cache)}개")
+            logger.info(f" 알림 규칙 로드 완료: {len(self.alert_rules_cache)}개")
             
         except Exception as e:
             logger.error(f"알림 규칙 로드 실패: {e}")
@@ -244,7 +244,7 @@ class EnhancedAlertSystem:
             for handler in self.notification_handlers:
                 await handler(alert)
                 
-            logger.info(f"🚨 [{alert.severity}] {alert.cluster_name}: {alert.message}")
+            logger.info(f"[ALERT] [{alert.severity}] {alert.cluster_name}: {alert.message}")
             
         except Exception as e:
             logger.error(f"알림 처리 실패: {e}")
@@ -437,7 +437,7 @@ class EnhancedAlertSystem:
 
 async def test_enhanced_alert_system():
     """향상된 알림 시스템 테스트"""
-    print("🚨 향상된 알림 시스템 테스트")
+    print("[ALERT] 향상된 알림 시스템 테스트")
     print("=" * 50)
     
     try:
@@ -463,24 +463,24 @@ async def test_enhanced_alert_system():
             cluster_id="test-cluster-id"
         )
         
-        print(f"\n📊 테스트 메트릭으로 알림 처리 중...")
+        print(f"\n 테스트 메트릭으로 알림 처리 중...")
         alerts = await alert_system.process_metrics_alerts(test_metrics)
         
-        print(f"\n📋 생성된 알림: {len(alerts)}개")
+        print(f"\n 생성된 알림: {len(alerts)}개")
         for alert in alerts[:3]:  # 상위 3개만 표시
-            print(f"  🚨 {alert.severity}: {alert.message}")
+            print(f"  [ALERT] {alert.severity}: {alert.message}")
         
         # 알림 요약
         summary = await alert_system.get_alert_summary()
-        print(f"\n📊 알림 요약:")
+        print(f"\n 알림 요약:")
         print(f"  활성 알림: {summary['total_active']}개")
         print(f"  CRITICAL: {summary['by_severity']['CRITICAL']}개")
         print(f"  WARNING: {summary['by_severity']['WARNING']}개")
         
-        print(f"\n✅ 향상된 알림 시스템 테스트 완료")
+        print(f"\n[OK] 향상된 알림 시스템 테스트 완료")
         
     except Exception as e:
-        print(f"❌ 테스트 실패: {e}")
+        print(f"[ERROR] 테스트 실패: {e}")
 
 if __name__ == "__main__":
     asyncio.run(test_enhanced_alert_system())

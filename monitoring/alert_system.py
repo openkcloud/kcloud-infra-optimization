@@ -139,7 +139,7 @@ class AlertSystem:
         ]
         
         self.alert_rules = default_rules
-        print(f"✅ 기본 알림 규칙 {len(default_rules)}개 설정 완료")
+        print(f"[OK] 기본 알림 규칙 {len(default_rules)}개 설정 완료")
     
     def add_rule(self, rule: AlertRule):
         """알림 규칙 추가"""
@@ -149,7 +149,7 @@ class AlertSystem:
     def remove_rule(self, rule_name: str):
         """알림 규칙 제거"""
         self.alert_rules = [r for r in self.alert_rules if r.name != rule_name]
-        print(f"🗑️ 알림 규칙 제거: {rule_name}")
+        print(f" 알림 규칙 제거: {rule_name}")
     
     def evaluate_conditions(self, metrics: ClusterMetrics) -> List[Alert]:
         """메트릭에 대해 알림 조건 평가"""
@@ -200,7 +200,7 @@ class AlertSystem:
                         self.last_alert_time[alert_key] = current_time
                         
             except Exception as e:
-                print(f"⚠️ 알림 규칙 '{rule.name}' 평가 실패: {e}")
+                print(f"[WARNING] 알림 규칙 '{rule.name}' 평가 실패: {e}")
         
         return triggered_alerts
     
@@ -212,14 +212,14 @@ class AlertSystem:
             self.active_alerts.append(alert)
             self.alert_history.append(alert)
             
-            print(f"🚨 [{alert.severity}] {alert.message}")
+            print(f"[ALERT] [{alert.severity}] {alert.message}")
             
             # 알림 핸들러 실행
             for handler in self.notification_handlers:
                 try:
                     handler(alert)
                 except Exception as e:
-                    print(f"❌ 알림 핸들러 실행 실패: {e}")
+                    print(f"[ERROR] 알림 핸들러 실행 실패: {e}")
         
         # 활성 알림 정리 (해결된 알림 제거)
         self.cleanup_resolved_alerts()
@@ -244,7 +244,7 @@ class AlertSystem:
         for alert in self.active_alerts:
             if alert.id == alert_id:
                 alert.acknowledged = True
-                print(f"✅ 알림 확인: {alert_id}")
+                print(f"[OK] 알림 확인: {alert_id}")
                 return True
         return False
     
@@ -253,7 +253,7 @@ class AlertSystem:
         for alert in self.active_alerts:
             if alert.id == alert_id:
                 alert.resolved = True
-                print(f"✅ 알림 해결: {alert_id}")
+                print(f"[OK] 알림 해결: {alert_id}")
                 return True
         return False
     
@@ -311,7 +311,7 @@ class AlertSystem:
         with open(filename, 'w') as f:
             json.dump(data, f, indent=2)
         
-        print(f"💾 알림 히스토리 저장: {filename}")
+        print(f" 알림 히스토리 저장: {filename}")
 
 # 알림 핸들러 예시들
 def console_handler(alert: Alert):
@@ -337,11 +337,11 @@ def file_handler(alert: Alert):
 def webhook_handler(alert: Alert):
     """웹훅 핸들러 (Slack, Discord 등)"""
     # 실제 구현에서는 requests 라이브러리 사용
-    print(f"📡 웹훅 전송: {alert.message}")
+    print(f" 웹훅 전송: {alert.message}")
 
 def main():
     """알림 시스템 테스트"""
-    print("🚨 kcloud-opt 알림 시스템 테스트")
+    print("[ALERT] kcloud-opt 알림 시스템 테스트")
     print("=" * 40)
     
     # 알림 시스템 초기화
@@ -367,16 +367,16 @@ def main():
         template_id="ai-k8s-template"
     )
     
-    print(f"\n📊 테스트 메트릭 처리 중...")
+    print(f"\n 테스트 메트릭 처리 중...")
     alerts = alert_system.process_metrics(test_metrics)
     
-    print(f"\n📋 생성된 알림: {len(alerts)}개")
+    print(f"\n 생성된 알림: {len(alerts)}개")
     for alert in alerts:
-        print(f"  🚨 {alert.severity}: {alert.message}")
+        print(f"  [ALERT] {alert.severity}: {alert.message}")
     
     # 알림 요약
     summary = alert_system.get_alert_summary()
-    print(f"\n📊 알림 요약:")
+    print(f"\n 알림 요약:")
     print(f"  활성 알림: {summary['total_active']}개")
     print(f"  CRITICAL: {summary['by_severity']['CRITICAL']}개")
     print(f"  WARNING: {summary['by_severity']['WARNING']}개")
@@ -385,7 +385,7 @@ def main():
     # 히스토리 저장
     alert_system.save_alert_history()
     
-    print(f"\n✅ 알림 시스템 테스트 완료")
+    print(f"\n[OK] 알림 시스템 테스트 완료")
 
 if __name__ == "__main__":
     main()

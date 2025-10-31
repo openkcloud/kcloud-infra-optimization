@@ -66,7 +66,7 @@ class DatabaseIntegratedMonitor:
             logger.info("✅ 모니터링 시스템 초기화 완료")
             
         except Exception as e:
-            logger.error(f"❌ 초기화 실패: {e}")
+            logger.error(f"[ERROR] 초기화 실패: {e}")
             if self.use_database:
                 logger.info("🔄 폴백 시스템으로 전환")
                 await self._initialize_fallback_system()
@@ -108,7 +108,7 @@ class DatabaseIntegratedMonitor:
             return await self._monitor_clusters_fallback(cluster_names)
         
         try:
-            logger.info(f"🔍 향상된 모니터링: {len(cluster_names)}개 클러스터")
+            logger.info(f" 향상된 모니터링: {len(cluster_names)}개 클러스터")
             
             # 비동기 메트릭 수집
             metrics_list = await self.metrics_collector.collect_multiple_clusters_async(cluster_names)
@@ -144,7 +144,7 @@ class DatabaseIntegratedMonitor:
         if not self.fallback_monitor:
             await self._initialize_fallback_system()
         
-        logger.info(f"🔄 폴백 모니터링: {len(cluster_names)}개 클러스터")
+        logger.info(f" 폴백 모니터링: {len(cluster_names)}개 클러스터")
         cluster_metrics = self.fallback_monitor.monitor_clusters(cluster_names)
         
         # 기존 형식을 새 형식으로 변환
@@ -322,8 +322,8 @@ class DatabaseIntegratedMonitor:
     
     async def run_continuous_monitoring(self, cluster_names: List[str]):
         """연속 모니터링 실행"""
-        logger.info(f"🚀 데이터베이스 통합 연속 모니터링 시작")
-        logger.info(f"📊 모니터링 대상: {len(cluster_names)}개 클러스터")
+        logger.info(f" 데이터베이스 통합 연속 모니터링 시작")
+        logger.info(f" 모니터링 대상: {len(cluster_names)}개 클러스터")
         logger.info(f"⏱️  업데이트 주기: {self.update_interval}초")
         print("종료하려면 Ctrl+C를 누르세요\n")
         
@@ -332,11 +332,11 @@ class DatabaseIntegratedMonitor:
         try:
             while self.running:
                 print(f"\n{'='*80}")
-                print(f"⏰ 모니터링 업데이트: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                print(f" 모니터링 업데이트: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
                 if self.use_database and self.db_manager:
-                    print("🗄️ 모드: 데이터베이스 통합")
+                    print(" 모드: 데이터베이스 통합")
                 else:
-                    print("🔄 모드: 폴백 시스템")
+                    print(" 모드: 폴백 시스템")
                 print('='*80)
                 
                 # 모니터링 실행
@@ -350,64 +350,64 @@ class DatabaseIntegratedMonitor:
                     await self._perform_health_check()
                 
                 # 다음 업데이트까지 대기
-                print(f"\n💤 {self.update_interval}초 후 다음 업데이트...")
+                print(f"\n {self.update_interval}초 후 다음 업데이트...")
                 await asyncio.sleep(self.update_interval)
                 
         except KeyboardInterrupt:
-            print(f"\n\n👋 모니터링 중지됨")
+            print(f"\n\n 모니터링 중지됨")
             self.running = False
         except Exception as e:
-            print(f"\n❌ 모니터링 오류: {e}")
+            print(f"\n[ERROR] 모니터링 오류: {e}")
             logger.error(f"연속 모니터링 실패: {e}")
             self.running = False
     
     def _print_monitoring_summary(self, summary: Dict[str, Any]):
         """모니터링 요약 출력"""
         if not summary.get('clusters'):
-            print("❌ 수집된 메트릭이 없습니다")
+            print("[ERROR] 수집된 메트릭이 없습니다")
             return
         
         # 기본 정보
         summary_data = summary['summary']
-        print(f"\n📦 클러스터 상태:")
+        print(f"\n 클러스터 상태:")
         print(f"  활성: {summary_data['active_clusters']}/{summary_data['total_clusters']}개")
-        print(f"  💰 총 비용: ${summary_data['total_cost_per_hour']:.2f}/시간")
-        print(f"  📅 예상 월비용: ${summary_data['total_cost_per_hour'] * 24 * 30:.0f}")
-        print(f"  🔋 총 전력: {summary_data['total_power_consumption']:.0f}W")
+        print(f"   총 비용: ${summary_data['total_cost_per_hour']:.2f}/시간")
+        print(f"   예상 월비용: ${summary_data['total_cost_per_hour'] * 24 * 30:.0f}")
+        print(f"   총 전력: {summary_data['total_power_consumption']:.0f}W")
         
         if summary_data['active_clusters'] > 0:
-            print(f"  💚 평균 헬스: {summary_data.get('avg_health_score', 0):.1f}/100")
-            print(f"  ⚡ 평균 효율성: {summary_data.get('avg_efficiency_score', 0):.1f}/100")
+            print(f"   평균 헬스: {summary_data.get('avg_health_score', 0):.1f}/100")
+            print(f"   평균 효율성: {summary_data.get('avg_efficiency_score', 0):.1f}/100")
         
         # 알림 정보
         alerts = summary['alerts']
         if alerts['total_active'] > 0:
-            print(f"\n🚨 활성 알림: {alerts['total_active']}개")
+            print(f"\n[ALERT] 활성 알림: {alerts['total_active']}개")
             print(f"  CRITICAL: {alerts['by_severity']['CRITICAL']}개")
             print(f"  WARNING: {alerts['by_severity']['WARNING']}개")
             print(f"  INFO: {alerts['by_severity']['INFO']}개")
         else:
-            print(f"\n✅ 활성 알림 없음")
+            print(f"\n[OK] 활성 알림 없음")
         
         # 성능 분석 (향상된 모드만)
         if 'performance' in summary:
             perf = summary['performance']
             if 'cpu' in perf:
-                print(f"\n📊 성능 분석:")
+                print(f"\n 성능 분석:")
                 print(f"  CPU 평균: {perf['cpu']['avg']:.1f}% (최대: {perf['cpu']['max']:.1f}%)")
                 print(f"  메모리 평균: {perf['memory']['avg']:.1f}% (최대: {perf['memory']['max']:.1f}%)")
         
         # 데이터베이스 통계 (향상된 모드만)
         if 'database_stats' in summary and summary['database_stats'].get('status') == 'connected':
             db_stats = summary['database_stats']
-            print(f"\n🗄️ 데이터베이스:")
+            print(f"\n 데이터베이스:")
             print(f"  메트릭 (1시간): {db_stats['postgresql']['metrics_last_hour']}개")
             print(f"  Redis 메모리: {db_stats['redis']['memory_used_mb']}MB")
         
         # 권장사항
         recommendations = summary.get('recommendations', [])
         if recommendations:
-            print(f"\n💡 권장사항:")
+            print(f"\n 권장사항:")
             for rec in recommendations[:3]:  # 상위 3개만
                 print(f"  - {rec}")
     
@@ -506,7 +506,7 @@ async def main():
     
     args = parser.parse_args()
     
-    print("🌐 kcloud-opt 데이터베이스 통합 모니터링 시스템")
+    print(" kcloud-opt 데이터베이스 통합 모니터링 시스템")
     print("=" * 60)
     
     use_database = not args.no_database
@@ -520,7 +520,7 @@ async def main():
         elif args.mode == 'test':
             print("🧪 시스템 테스트 모드")
             summary = await monitor.monitor_clusters_enhanced(args.clusters)
-            print(f"📊 테스트 결과: {len(summary['clusters'])}개 클러스터 모니터링 완료")
+            print(f" 테스트 결과: {len(summary['clusters'])}개 클러스터 모니터링 완료")
             if monitor.db_manager:
                 health = await monitor.db_manager.health_check()
                 print(f"🏥 데이터베이스 상태: {health}")

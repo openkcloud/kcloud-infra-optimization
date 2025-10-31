@@ -30,7 +30,7 @@ class IntegratedMonitor:
         # 알림 핸들러 설정
         self.setup_alert_handlers()
         
-        print("✅ 통합 모니터링 시스템 초기화 완료")
+        print("통합 모니터링 시스템 초기화 완료")
     
     def setup_alert_handlers(self):
         """알림 핸들러 설정"""
@@ -46,7 +46,7 @@ class IntegratedMonitor:
     
     def monitor_clusters(self, cluster_names: List[str]) -> Dict[str, ClusterMetrics]:
         """클러스터들 모니터링"""
-        print(f"🔍 {len(cluster_names)}개 클러스터 모니터링 중...")
+        print(f"{len(cluster_names)}개 클러스터 모니터링 중...")
         
         cluster_metrics = {}
         
@@ -59,16 +59,16 @@ class IntegratedMonitor:
                 # 알림 처리
                 alerts = self.alert_system.process_metrics(metrics)
                 if alerts:
-                    print(f"🚨 {cluster_name}: {len(alerts)}개 알림 생성")
+                    print(f"[ALERT] {cluster_name}: {len(alerts)}개 알림 생성")
                 
             except Exception as e:
-                print(f"❌ {cluster_name} 모니터링 실패: {e}")
+                print(f"[ERROR] {cluster_name} 모니터링 실패: {e}")
         
         return cluster_metrics
     
     def run_continuous_monitoring(self, cluster_names: List[str]):
         """연속 모니터링 실행"""
-        print(f"🚀 연속 모니터링 시작 - {self.update_interval}초 간격")
+        print(f"연속 모니터링 시작 - {self.update_interval}초 간격")
         print("종료하려면 Ctrl+C를 누르세요\n")
         
         self.running = True
@@ -76,7 +76,7 @@ class IntegratedMonitor:
         try:
             while self.running:
                 print(f"\n{'='*60}")
-                print(f"⏰ 모니터링 업데이트: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                print(f"모니터링 업데이트: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
                 print('='*60)
                 
                 # 클러스터 모니터링
@@ -86,31 +86,31 @@ class IntegratedMonitor:
                 self.print_monitoring_summary(cluster_metrics)
                 
                 # 다음 업데이트까지 대기
-                print(f"\n💤 {self.update_interval}초 후 다음 업데이트...")
+                print(f"\n{self.update_interval}초 후 다음 업데이트...")
                 time.sleep(self.update_interval)
                 
         except KeyboardInterrupt:
-            print(f"\n\n👋 모니터링 중지됨")
+            print(f"\n\n모니터링 중지됨")
             self.running = False
         except Exception as e:
-            print(f"\n❌ 모니터링 오류: {e}")
+            print(f"\n[ERROR] 모니터링 오류: {e}")
             self.running = False
     
     def print_monitoring_summary(self, cluster_metrics: Dict[str, ClusterMetrics]):
         """모니터링 요약 출력"""
         if not cluster_metrics:
-            print("❌ 수집된 메트릭이 없습니다")
+            print("[ERROR] 수집된 메트릭이 없습니다")
             return
         
         total_cost = 0.0
         total_power = 0.0
         active_clusters = 0
         
-        print(f"\n📦 클러스터 상태:")
+        print(f"\n클러스터 상태:")
         for cluster_name, metrics in cluster_metrics.items():
-            status_icon = self.get_status_icon(metrics.status)
+            status_indicator = self.get_status_indicator(metrics.status)
             
-            print(f"  {status_icon} {cluster_name}")
+            print(f"  {status_indicator} {cluster_name}")
             print(f"    상태: {metrics.status}")
             print(f"    노드: {metrics.node_count}개")
             print(f"    비용: ${metrics.cost_per_hour:.2f}/시간")
@@ -128,39 +128,43 @@ class IntegratedMonitor:
             print()
         
         # 전체 요약
-        print(f"💰 총 비용: ${total_cost:.2f}/시간 | 📅 예상 월비용: ${total_cost * 24 * 30:.0f}")
-        print(f"🔋 총 전력: {total_power:.0f}W")
-        print(f"📊 활성 클러스터: {active_clusters}/{len(cluster_metrics)}개")
+        print(f"총 비용: ${total_cost:.2f}/시간 | 예상 월비용: ${total_cost * 24 * 30:.0f}")
+        print(f"총 전력: {total_power:.0f}W")
+        print(f"활성 클러스터: {active_clusters}/{len(cluster_metrics)}개")
         
         # 알림 요약
         alert_summary = self.alert_system.get_alert_summary()
         if alert_summary['total_active'] > 0:
-            print(f"\n🚨 활성 알림: {alert_summary['total_active']}개")
+            print(f"\n[ALERT] 활성 알림: {alert_summary['total_active']}개")
             print(f"  CRITICAL: {alert_summary['by_severity']['CRITICAL']}개")
             print(f"  WARNING: {alert_summary['by_severity']['WARNING']}개")
             print(f"  INFO: {alert_summary['by_severity']['INFO']}개")
         else:
-            print(f"\n✅ 활성 알림 없음")
+            print(f"\n[OK] 활성 알림 없음")
     
     def get_status_icon(self, status: str) -> str:
-        """상태 아이콘 반환"""
-        icons = {
-            'CREATE_COMPLETE': '✅',
-            'CREATE_IN_PROGRESS': '🟡',
-            'CREATE_FAILED': '🔴',
-            'DELETE_IN_PROGRESS': '🟠',
-            'ERROR': '⚠️'
+        """상태 아이콘 반환 (deprecated, use get_status_indicator instead)"""
+        return self.get_status_indicator(status)
+    
+    def get_status_indicator(self, status: str) -> str:
+        """상태 표시기 반환"""
+        indicators = {
+            'CREATE_COMPLETE': '[OK]',
+            'CREATE_IN_PROGRESS': '[IN_PROGRESS]',
+            'CREATE_FAILED': '[FAILED]',
+            'DELETE_IN_PROGRESS': '[DELETING]',
+            'ERROR': '[ERROR]'
         }
-        return icons.get(status, '❓')
+        return indicators.get(status, '[UNKNOWN]')
     
     def run_dashboard_mode(self, cluster_names: List[str]):
         """대시보드 모드 실행"""
-        print("🖥️ 실시간 대시보드 모드 시작...")
+        print("실시간 대시보드 모드 시작...")
         self.dashboard.run_dashboard(cluster_names)
     
     def generate_report(self, cluster_names: List[str]) -> Dict:
         """모니터링 리포트 생성"""
-        print("📊 모니터링 리포트 생성 중...")
+        print("모니터링 리포트 생성 중...")
         
         cluster_metrics = self.monitor_clusters(cluster_names)
         alert_summary = self.alert_system.get_alert_summary()
@@ -226,7 +230,7 @@ class IntegratedMonitor:
         with open(filename, 'w') as f:
             json.dump(report, f, indent=2)
         
-        print(f"💾 모니터링 리포트 저장: {filename}")
+        print(f"모니터링 리포트 저장: {filename}")
     
     def stop_monitoring(self):
         """모니터링 중지"""
@@ -246,7 +250,7 @@ def main():
     
     args = parser.parse_args()
     
-    print("🌐 kcloud-opt 통합 모니터링 시스템")
+    print("kcloud-opt 통합 모니터링 시스템")
     print("=" * 50)
     
     monitor = IntegratedMonitor(update_interval=args.interval)
@@ -261,11 +265,11 @@ def main():
         report = monitor.generate_report(args.clusters)
         monitor.save_report(report)
         
-        print(f"\n📊 리포트 요약:")
+        print(f"\n리포트 요약:")
         print(f"  총 비용: ${report['summary']['total_cost_per_hour']:.2f}/시간")
         print(f"  총 전력: {report['summary']['total_power_consumption']:.0f}W")
         print(f"  활성 알림: {report['alerts']['total_active']}개")
-        print(f"\n💡 권장사항:")
+        print(f"\n권장사항:")
         for rec in report['recommendations']:
             print(f"  - {rec}")
 

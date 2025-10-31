@@ -315,15 +315,15 @@ if __name__ == "__main__":
     cluster_name = "kcloud-dev-cluster"
     user_id = "user-123"
     
-    print("📊 클러스터 키:")
+    print(" 클러스터 키:")
     print(f"  현재 상태: {RedisKeys.cluster_current(cluster_name)}")
     print(f"  설정: {RedisKeys.cluster_config(cluster_name)}")
     
-    print(f"\n📈 메트릭 키:")
+    print(f"\n 메트릭 키:")
     print(f"  최신: {RedisKeys.metrics_latest(cluster_name)}")
     print(f"  히스토리: {RedisKeys.metrics_history(cluster_name, '1h')}")
     
-    print(f"\n🚨 알림 키:")
+    print(f"\n[ALERT] 알림 키:")
     print(f"  활성 알림: {RedisKeys.alerts_active()}")
     print(f"  클러스터별: {RedisKeys.alerts_by_cluster(cluster_name)}")
     
@@ -331,10 +331,10 @@ if __name__ == "__main__":
     print(f"  세션: {RedisKeys.user_session(user_id)}")
     print(f"  대시보드 설정: {RedisKeys.dashboard_config(user_id)}")
     
-    print(f"\n📡 Pub/Sub 채널:")
+    print(f"\n Pub/Sub 채널:")
     print(f"  새 알림: {RedisPubSubChannels.ALERTS_NEW}")
     print(f"  메트릭 업데이트: {RedisPubSubChannels.METRICS_UPDATED}")
     
-    print(f"\n⏰ 만료 정책:")
+    print(f"\n 만료 정책:")
     print(f"  클러스터 현재 상태: {RedisExpirePolicy.CLUSTER_CURRENT}초")
     print(f"  대시보드 캐시: {RedisExpirePolicy.DASHBOARD_CACHE}초")

@@ -313,7 +313,7 @@ class EnhancedMetricsCollector:
 
 async def test_enhanced_collector():
     """향상된 수집기 테스트"""
-    print("🚀 향상된 메트릭 수집기 테스트")
+    print(" 향상된 메트릭 수집기 테스트")
     print("=" * 50)
     
     try:
@@ -322,13 +322,13 @@ async def test_enhanced_collector():
         
         # 단일 클러스터 수집 (기존 방식으로 폴백)
         cluster_name = "kcloud-dev-cluster"
-        print(f"\n📊 단일 클러스터 메트릭 수집: {cluster_name}")
+        print(f"\n 단일 클러스터 메트릭 수집: {cluster_name}")
         
         # 기존 수집기 사용 (DB 연결 없이)
         base_metrics = collector.base_collector.collect_full_metrics(cluster_name)
         enhanced = collector._enhance_metrics(base_metrics)
         
-        print(f"✅ 수집 완료:")
+        print(f"[OK] 수집 완료:")
         print(f"  클러스터: {enhanced.cluster_name}")
         print(f"  상태: {enhanced.status}")
         print(f"  비용: ${enhanced.cost_per_hour:.2f}/시간")
@@ -336,11 +336,11 @@ async def test_enhanced_collector():
         print(f"  수집 ID: {enhanced.collection_id}")
         
         # 다중 클러스터 테스트 준비
-        print(f"\n📊 다중 클러스터 수집 준비 완료")
+        print(f"\n 다중 클러스터 수집 준비 완료")
         print(f"  수집기 세션: {collector.collection_session_id}")
         
     except Exception as e:
-        print(f"❌ 테스트 실패: {e}")
+        print(f"[ERROR] 테스트 실패: {e}")
 
 if __name__ == "__main__":
     asyncio.run(test_enhanced_collector())

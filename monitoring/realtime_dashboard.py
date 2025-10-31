@@ -81,22 +81,22 @@ class RealTimeDashboard:
         
         # 높은 비용 알림
         if metrics.cost_per_hour > 15.0:
-            alerts.append(f"{timestamp} 🚨 [{metrics.cluster_name}] 높은 비용: {self.format_cost(metrics.cost_per_hour)}/시간")
+            alerts.append(f"{timestamp} [ALERT] [{metrics.cluster_name}] 높은 비용: {self.format_cost(metrics.cost_per_hour)}/시간")
         
         # 낮은 헬스 스코어
         if metrics.health_score < 50:
-            alerts.append(f"{timestamp} ⚠️ [{metrics.cluster_name}] 헬스 주의: {metrics.health_score:.1f}/100")
+            alerts.append(f"{timestamp} [WARNING] [{metrics.cluster_name}] 헬스 주의: {metrics.health_score:.1f}/100")
         
         # 실패한 포드
         if metrics.failed_pods > 0:
-            alerts.append(f"{timestamp} 🔴 [{metrics.cluster_name}] 실패한 포드: {metrics.failed_pods}개")
+            alerts.append(f"{timestamp} [FAILED] [{metrics.cluster_name}] 실패한 포드: {metrics.failed_pods}개")
         
         # 높은 자원 사용률
         if metrics.cpu_usage > 90:
-            alerts.append(f"{timestamp} 📊 [{metrics.cluster_name}] 높은 CPU: {metrics.cpu_usage:.1f}%")
+            alerts.append(f"{timestamp}  [{metrics.cluster_name}] 높은 CPU: {metrics.cpu_usage:.1f}%")
         
         if metrics.memory_usage > 90:
-            alerts.append(f"{timestamp} 🧠 [{metrics.cluster_name}] 높은 메모리: {metrics.memory_usage:.1f}%")
+            alerts.append(f"{timestamp}  [{metrics.cluster_name}] 높은 메모리: {metrics.memory_usage:.1f}%")
         
         # 알림 저장
         for alert in alerts:
@@ -110,28 +110,28 @@ class RealTimeDashboard:
         print(f"      상태: {metrics.status} | 노드: {metrics.node_count}개")
         
         if metrics.status == 'CREATE_COMPLETE':
-            print(f"      💰 비용: {self.format_cost(metrics.cost_per_hour)}/시간")
-            print(f"      🔋 전력: {self.format_power(metrics.power_consumption_watts)}")
-            print(f"      📊 CPU:    {self.draw_progress_bar(metrics.cpu_usage)}")
-            print(f"      🧠 메모리: {self.draw_progress_bar(metrics.memory_usage)}")
+            print(f"       비용: {self.format_cost(metrics.cost_per_hour)}/시간")
+            print(f"       전력: {self.format_power(metrics.power_consumption_watts)}")
+            print(f"       CPU:    {self.draw_progress_bar(metrics.cpu_usage)}")
+            print(f"       메모리: {self.draw_progress_bar(metrics.memory_usage)}")
             
             if metrics.gpu_usage > 0:
-                print(f"      ⚡ GPU:    {self.draw_progress_bar(metrics.gpu_usage)}")
+                print(f"       GPU:    {self.draw_progress_bar(metrics.gpu_usage)}")
             
-            print(f"      💚 헬스: {metrics.health_score:5.1f}/100 | ⚡ 효율성: {metrics.efficiency_score:5.1f}/100")
+            print(f"       헬스: {metrics.health_score:5.1f}/100 |  효율성: {metrics.efficiency_score:5.1f}/100")
             
             if metrics.failed_pods > 0 or metrics.pending_pods > 0:
                 print(f"      🏃 포드: 실행중 {metrics.running_pods} | 실패 {metrics.failed_pods} | 대기 {metrics.pending_pods}")
         else:
-            print(f"      ⏳ 클러스터 생성/삭제 진행 중...")
+            print(f"       클러스터 생성/삭제 진행 중...")
     
     def display_dashboard(self, cluster_names: List[str]):
         """대시보드 화면 표시"""
         self.clear_screen()
         
-        print("🌐 kcloud-opt 실시간 클러스터 모니터링 대시보드")
+        print(" kcloud-opt 실시간 클러스터 모니터링 대시보드")
         print("=" * 80)
-        print(f"⏰ 업데이트: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | 🔄 {self.update_interval}초마다 갱신")
+        print(f" 업데이트: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} |  {self.update_interval}초마다 갱신")
         print()
         
         total_cost = 0.0
@@ -139,7 +139,7 @@ class RealTimeDashboard:
         active_clusters = 0
         total_clusters = len(cluster_names)
         
-        print("📦 클러스터 현황")
+        print(" 클러스터 현황")
         print("-" * 40)
         
         # 각 클러스터 정보 표시
@@ -171,16 +171,16 @@ class RealTimeDashboard:
                 print()
                 
             except Exception as e:
-                print(f"  ❌ {cluster_name}: 메트릭 수집 실패 - {e}")
+                print(f"  [ERROR] {cluster_name}: 메트릭 수집 실패 - {e}")
                 print()
         
         # 전체 요약
         print("=" * 80)
-        print("📊 전체 요약")
+        print(" 전체 요약")
         print("-" * 20)
-        print(f"🌐 클러스터: {total_clusters}개 (활성: {active_clusters}개)")
-        print(f"💰 총 비용: {self.format_cost(total_cost)}/시간 | 📅 예상 월비용: {self.format_cost(total_cost * 24 * 30)}")
-        print(f"🔋 총 전력: {self.format_power(total_power)}")
+        print(f" 클러스터: {total_clusters}개 (활성: {active_clusters}개)")
+        print(f" 총 비용: {self.format_cost(total_cost)}/시간 |  예상 월비용: {self.format_cost(total_cost * 24 * 30)}")
+        print(f" 총 전력: {self.format_power(total_power)}")
         
         if active_clusters > 0:
             avg_cpu = sum(m.cpu_usage for m in all_metrics if m.status == 'CREATE_COMPLETE') / active_clusters
@@ -188,24 +188,24 @@ class RealTimeDashboard:
             avg_health = sum(m.health_score for m in all_metrics if m.status == 'CREATE_COMPLETE') / active_clusters
             avg_efficiency = sum(m.efficiency_score for m in all_metrics if m.status == 'CREATE_COMPLETE') / active_clusters
             
-            print(f"📊 평균 활용률:")
+            print(f" 평균 활용률:")
             print(f"   CPU:    {self.draw_progress_bar(avg_cpu)}")
             print(f"   메모리: {self.draw_progress_bar(avg_memory)}")
-            print(f"💚 평균 헬스: {avg_health:5.1f}/100 | ⚡ 평균 효율성: {avg_efficiency:5.1f}/100")
+            print(f" 평균 헬스: {avg_health:5.1f}/100 |  평균 효율성: {avg_efficiency:5.1f}/100")
         
         # 최근 알림
         if self.alerts:
-            print(f"\n🚨 최근 알림 ({len(self.alerts)}개)")
+            print(f"\n[ALERT] 최근 알림 ({len(self.alerts)}개)")
             print("-" * 30)
             for alert in list(self.alerts)[-5:]:  # 최근 5개만 표시
                 print(f"  {alert}")
         
-        print(f"\n💡 다음 업데이트: {self.update_interval}초 후 | 종료: Ctrl+C")
+        print(f"\n 다음 업데이트: {self.update_interval}초 후 | 종료: Ctrl+C")
     
     def run_dashboard(self, cluster_names: List[str]):
         """대시보드 실행"""
-        print(f"🚀 실시간 대시보드 시작 - {len(cluster_names)}개 클러스터 모니터링")
-        print(f"📊 업데이트 주기: {self.update_interval}초")
+        print(f" 실시간 대시보드 시작 - {len(cluster_names)}개 클러스터 모니터링")
+        print(f" 업데이트 주기: {self.update_interval}초")
         print("잠시 후 대시보드가 시작됩니다...")
         time.sleep(2)
         
@@ -217,10 +217,10 @@ class RealTimeDashboard:
                 time.sleep(self.update_interval)
                 
         except KeyboardInterrupt:
-            print("\n\n👋 대시보드 종료")
+            print("\n\n 대시보드 종료")
             self.running = False
         except Exception as e:
-            print(f"\n❌ 대시보드 오류: {e}")
+            print(f"\n[ERROR] 대시보드 오류: {e}")
             self.running = False
     
     def stop_dashboard(self):
@@ -277,14 +277,14 @@ def main():
         # 1회만 실행
         summary = dashboard.get_metrics_summary(args.clusters)
         
-        print("📊 현재 클러스터 상태 요약")
+        print(" 현재 클러스터 상태 요약")
         print("=" * 40)
         
         for cluster_name, metrics in summary['clusters'].items():
             if 'error' in metrics:
-                print(f"❌ {cluster_name}: {metrics['error']}")
+                print(f"[ERROR] {cluster_name}: {metrics['error']}")
             else:
-                print(f"🌐 {cluster_name}")
+                print(f" {cluster_name}")
                 print(f"  상태: {metrics['status']}")
                 print(f"  비용: ${metrics['cost_per_hour']:.2f}/시간")
                 print(f"  전력: {metrics['power_consumption_watts']:.0f}W")
@@ -292,9 +292,9 @@ def main():
                 print()
         
         totals = summary['totals']
-        print(f"💰 총 비용: ${totals['cost_per_hour']:.2f}/시간")
-        print(f"🔋 총 전력: {totals['power_consumption']:.0f}W")
-        print(f"📦 활성 클러스터: {totals['active_clusters']}/{totals['total_clusters']}개")
+        print(f" 총 비용: ${totals['cost_per_hour']:.2f}/시간")
+        print(f" 총 전력: {totals['power_consumption']:.0f}W")
+        print(f" 활성 클러스터: {totals['active_clusters']}/{totals['total_clusters']}개")
 
 if __name__ == "__main__":
     main()
