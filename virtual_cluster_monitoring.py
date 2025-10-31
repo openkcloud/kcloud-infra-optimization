@@ -4,6 +4,7 @@ kcloud-opt 가상 클러스터 실시간 모니터링 시스템
 Prometheus + Grafana + Custom Metrics 통합
 """
 
+import os
 import sys
 import time
 import json
@@ -60,12 +61,12 @@ class VirtualClusterMonitor:
     
     def __init__(self, update_interval=30):
         self.auth_config = {
-            'auth_url': 'http://10.0.4.200:5000/v3',
-            'username': 'admin',
-            'password': 'ketilinux',
-            'project_name': 'cloud-platform',
-            'project_domain_name': 'Default',
-            'user_domain_name': 'Default'
+            'auth_url': os.getenv('OS_AUTH_URL', 'http://10.0.4.200:5000/v3'),
+            'username': os.getenv('OS_USERNAME', 'admin'),
+            'password': os.getenv('OS_PASSWORD', ''),
+            'project_name': os.getenv('OS_PROJECT_NAME', 'cloud-platform'),
+            'project_domain_name': os.getenv('OS_PROJECT_DOMAIN_NAME', 'Default'),
+            'user_domain_name': os.getenv('OS_USER_DOMAIN_NAME', 'Default')
         }
         self.update_interval = update_interval
         self.monitoring_active = False
@@ -80,7 +81,7 @@ class VirtualClusterMonitor:
         sess = session.Session(auth=auth)
         self.magnum = magnum_client.Client('1', session=sess)
         self.conn = openstack.connect(**self.auth_config)
-        print("✅ 가상 클러스터 모니터링 시스템 초기화 완료")
+        print("가상 클러스터 모니터링 시스템 초기화 완료")
     
     def collect_cluster_metrics(self, cluster_name: str) -> ClusterMetrics:
         """단일 클러스터 메트릭 수집"""
@@ -107,7 +108,7 @@ class VirtualClusterMonitor:
             return metrics
             
         except Exception as e:
-            print(f"❌ 클러스터 '{cluster_name}' 메트릭 수집 실패: {e}")
+            print(f"클러스터 '{cluster_name}' 메트릭 수집 실패: {e}")
             return ClusterMetrics(
                 cluster_name=cluster_name,
                 timestamp=datetime.now().isoformat(),
@@ -164,7 +165,7 @@ class VirtualClusterMonitor:
     
     def collect_group_metrics(self, group_name: str, cluster_names: List[str]) -> GroupMetrics:
         """가상 그룹 전체 메트릭 수집"""
-        print(f"📊 그룹 '{group_name}' 메트릭 수집 중...")
+        print(f"그룹 '{group_name}' 메트릭 수집 중...")
         
         cluster_metrics = []
         for cluster_name in cluster_names:
@@ -281,7 +282,7 @@ class VirtualClusterMonitor:
     
     def start_monitoring(self, virtual_groups: Dict[str, List[str]]):
         """실시간 모니터링 시작"""
-        print(f"🚀 실시간 모니터링 시작 (업데이트 주기: {self.update_interval}초)")
+        print(f"실시간 모니터링 시작 (업데이트 주기: {self.update_interval}초)")
         self.monitoring_active = True
         
         def monitoring_loop():
@@ -306,7 +307,7 @@ class VirtualClusterMonitor:
                     time.sleep(self.update_interval)
                     
                 except Exception as e:
-                    print(f"❌ 모니터링 오류: {e}")
+                    print(f"모니터링 오류: {e}")
                     time.sleep(5)
         
         # 백그라운드 스레드에서 실행
@@ -315,7 +316,7 @@ class VirtualClusterMonitor:
     
     def stop_monitoring(self):
         """모니터링 중지"""
-        print("🛑 모니터링 중지")
+        print("모니터링 중지")
         self.monitoring_active = False
     
     def _check_alerts(self, group_metrics: GroupMetrics):
@@ -363,7 +364,7 @@ class VirtualClusterMonitor:
             if alert not in self.alerts:
                 alert['timestamp'] = datetime.now().isoformat()
                 self.alerts.append(alert)
-                print(f"🚨 [{alert['severity']}] {alert['message']}")
+                print(f"[{alert['severity']}] {alert['message']}")
     
     def get_current_status(self, group_name: str) -> Optional[GroupMetrics]:
         """현재 상태 반환"""
@@ -467,16 +468,16 @@ class VirtualClusterMonitor:
             with open(filename, 'w') as f:
                 json.dump(data, f, indent=2, default=str)
             
-            print(f"📁 메트릭 저장 완료: {filename}")
+            print(f"메트릭 저장 완료: {filename}")
         else:
-            print(f"❌ 그룹 '{group_name}'의 메트릭 데이터가 없습니다")
+            print(f"그룹 '{group_name}'의 메트릭 데이터가 없습니다")
 
 def main():
     """모니터링 시스템 사용 예시"""
     monitor = VirtualClusterMonitor(update_interval=10)  # 10초마다 업데이트
     
     print("=" * 60)
-    print("📊 가상 클러스터 모니터링 시스템")
+    print("가상 클러스터 모니터링 시스템")
     print("=" * 60)
     
     # 예시 가상 그룹 정의
@@ -485,26 +486,26 @@ def main():
         # 실제로는 여러 그룹과 클러스터들을 정의
     }
     
-    print("\n🔍 현재 상태 스냅샷:")
+    print("\n현재 상태 스냅샷:")
     for group_name, cluster_names in virtual_groups.items():
         metrics = monitor.collect_group_metrics(group_name, cluster_names)
-        print(f"\n🌐 그룹: {group_name}")
-        print(f"  📦 클러스터: {metrics.total_clusters}개 (활성: {metrics.active_clusters}개)")
-        print(f"  🖥️ 노드: {metrics.total_nodes}개")
-        print(f"  💰 시간당 비용: ${metrics.total_cost_per_hour:.2f}")
-        print(f"  📊 평균 CPU: {metrics.avg_cpu_usage:.1f}%")
-        print(f"  🧠 평균 메모리: {metrics.avg_memory_usage:.1f}%")
-        print(f"  ⚡ 평균 GPU: {metrics.avg_gpu_usage:.1f}%")
-        print(f"  🔋 전력 소비: {metrics.total_power_consumption:.0f}W")
-        print(f"  💚 헬스 스코어: {metrics.health_score:.1f}/100")
-        print(f"  ⚡ 효율성: {metrics.efficiency_score:.1f}/100")
+        print(f"\n그룹: {group_name}")
+        print(f"  클러스터: {metrics.total_clusters}개 (활성: {metrics.active_clusters}개)")
+        print(f"  노드: {metrics.total_nodes}개")
+        print(f"  시간당 비용: ${metrics.total_cost_per_hour:.2f}")
+        print(f"  평균 CPU: {metrics.avg_cpu_usage:.1f}%")
+        print(f"  평균 메모리: {metrics.avg_memory_usage:.1f}%")
+        print(f"  평균 GPU: {metrics.avg_gpu_usage:.1f}%")
+        print(f"  전력 소비: {metrics.total_power_consumption:.0f}W")
+        print(f"  헬스 스코어: {metrics.health_score:.1f}/100")
+        print(f"  효율성: {metrics.efficiency_score:.1f}/100")
     
-    print(f"\n💡 실시간 모니터링을 시작하려면:")
+    print(f"\n실시간 모니터링을 시작하려면:")
     print(f"monitor.start_monitoring(virtual_groups)")
     print(f"time.sleep(60)  # 1분간 모니터링")
     print(f"report = monitor.generate_monitoring_report('ml-training-group')")
     
-    print(f"\n✅ 모니터링 시스템 준비 완료")
+    print(f"\n모니터링 시스템 준비 완료")
 
 if __name__ == "__main__":
     main()
