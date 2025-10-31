@@ -3,10 +3,10 @@
 가상 클러스터 그룹 대시보드 예시
 """
 
-import sys
-sys.path.insert(0, '/root/kcloud_opt/venv/lib/python3.12/site-packages')
-
-from virtual_cluster_group_manager import VirtualClusterGroupManager
+try:
+    from virtual_cluster_group_manager import VirtualClusterGroupManager
+except ImportError:
+    raise ImportError("virtual_cluster_group_manager not found. Please ensure it's in PYTHONPATH")
 import json
 
 def show_group_dashboard():

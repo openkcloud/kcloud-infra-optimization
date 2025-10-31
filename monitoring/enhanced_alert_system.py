@@ -13,14 +13,21 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any, Callable
 from dataclasses import dataclass, asdict
 
-# 경로 설정
-sys.path.insert(0, '/root/kcloud_opt')
-
-# 기존 시스템 임포트
-from infrastructure.monitoring.alert_system import AlertSystem as BaseAlertSystem, Alert, AlertRule
-from infrastructure.monitoring.enhanced_metrics_collector import EnhancedClusterMetrics
-from infrastructure.database.connection import get_database_manager, DatabaseManager
-from infrastructure.database.redis_keys import RedisKeys, RedisPubSubChannels, RedisDataTypes, RedisExpirePolicy
+# 패키지 import - 환경에 설치되어 있거나 PYTHONPATH에 있어야 합니다
+try:
+    from infrastructure.monitoring.alert_system import AlertSystem as BaseAlertSystem, Alert, AlertRule
+    from infrastructure.monitoring.enhanced_metrics_collector import EnhancedClusterMetrics
+    from infrastructure.database.connection import get_database_manager, DatabaseManager
+    from infrastructure.database.redis_keys import RedisKeys, RedisPubSubChannels, RedisDataTypes, RedisExpirePolicy
+except ImportError:
+    # 상대 import 시도
+    try:
+        from .alert_system import AlertSystem as BaseAlertSystem, Alert, AlertRule
+        from .enhanced_metrics_collector import EnhancedClusterMetrics
+        from database.connection import get_database_manager, DatabaseManager
+        from database.redis_keys import RedisKeys, RedisPubSubChannels, RedisDataTypes, RedisExpirePolicy
+    except ImportError:
+        raise ImportError("Required modules not found. Please ensure they're in PYTHONPATH or install the package")
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)

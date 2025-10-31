@@ -12,13 +12,14 @@ from typing import Dict, Any, Optional, AsyncGenerator
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 
-# 패키지 경로 추가
-sys.path.insert(0, '/root/kcloud_opt')
-
-import asyncpg
-import redis.asyncio as aioredis
-from asyncpg import Pool
-from redis.asyncio import Redis
+# 패키지는 환경에 설치되어 있어야 합니다
+try:
+    import asyncpg
+    import redis.asyncio as aioredis
+    from asyncpg import Pool
+    from redis.asyncio import Redis
+except ImportError:
+    raise ImportError("Database libraries (asyncpg, redis) not found. Please install them or set PYTHONPATH")
 
 # 설정 로깅
 logging.basicConfig(level=logging.INFO)

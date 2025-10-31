@@ -12,15 +12,22 @@ from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, asdict
 
-# 가상환경 경로 추가
-sys.path.insert(0, '/root/kcloud_opt/venv/lib/python3.12/site-packages')
-sys.path.insert(0, '/root/kcloud_opt/infrastructure')
+# 패키지는 환경에 설치되어 있어야 합니다
+try:
+    from magnumclient import client as magnum_client
+    from keystoneauth1 import loading, session
+    import openstack
+except ImportError:
+    raise ImportError("OpenStack client libraries not found. Please install them or set PYTHONPATH")
 
-from magnumclient import client as magnum_client
-from keystoneauth1 import loading, session
-import openstack
-
-from monitoring.config import get_openstack_config, get_monitoring_config, get_cluster_template
+try:
+    from monitoring.config import get_openstack_config, get_monitoring_config, get_cluster_template
+except ImportError:
+    # 상대 import 시도
+    try:
+        from .config import get_openstack_config, get_monitoring_config, get_cluster_template
+    except ImportError:
+        raise ImportError("monitoring.config not found. Please ensure it's in PYTHONPATH")
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)

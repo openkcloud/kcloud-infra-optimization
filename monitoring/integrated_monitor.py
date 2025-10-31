@@ -10,10 +10,19 @@ import threading
 from datetime import datetime
 from typing import Dict, List, Optional
 
-sys.path.insert(0, '/root/kcloud_opt')
-from infrastructure.monitoring.metrics_collector import MetricsCollector, ClusterMetrics
-from infrastructure.monitoring.alert_system import AlertSystem, console_handler, file_handler
-from infrastructure.monitoring.realtime_dashboard import RealTimeDashboard
+# 상대 import 또는 설치된 패키지 사용
+try:
+    from infrastructure.monitoring.metrics_collector import MetricsCollector, ClusterMetrics
+    from infrastructure.monitoring.alert_system import AlertSystem, console_handler, file_handler
+    from infrastructure.monitoring.realtime_dashboard import RealTimeDashboard
+except ImportError:
+    # 상대 import 시도
+    try:
+        from .metrics_collector import MetricsCollector, ClusterMetrics
+        from .alert_system import AlertSystem, console_handler, file_handler
+        from .realtime_dashboard import RealTimeDashboard
+    except ImportError:
+        raise ImportError("monitoring modules not found. Please ensure they're in PYTHONPATH or install the package")
 
 class IntegratedMonitor:
     """통합 모니터링 시스템"""

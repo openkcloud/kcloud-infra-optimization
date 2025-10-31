@@ -15,8 +15,13 @@ from collections import defaultdict
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-sys.path.insert(0, '/root/kcloud_opt')
-from infrastructure.monitoring.metrics_collector import ClusterMetrics
+try:
+    from infrastructure.monitoring.metrics_collector import ClusterMetrics
+except ImportError:
+    try:
+        from .metrics_collector import ClusterMetrics
+    except ImportError:
+        raise ImportError("ClusterMetrics not found. Please ensure it's in PYTHONPATH")
 
 @dataclass
 class AlertRule:

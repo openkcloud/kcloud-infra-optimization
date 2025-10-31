@@ -10,11 +10,15 @@ import json
 import time
 from datetime import datetime
 from typing import List, Dict, Optional
-sys.path.insert(0, '/root/kcloud_opt/venv/lib/python3.12/site-packages')
 
-from magnumclient import client as magnum_client
-from keystoneauth1 import loading, session
-import openstack
+# 패키지는 환경에 설치되어 있어야 합니다
+# 또는 PYTHONPATH 환경 변수를 설정하세요
+try:
+    from magnumclient import client as magnum_client
+    from keystoneauth1 import loading, session
+    import openstack
+except ImportError as e:
+    raise ImportError(f"OpenStack client libraries not found: {e}. Please install them or set PYTHONPATH")
 
 class VirtualClusterGroup:
     """Virtual cluster group class"""

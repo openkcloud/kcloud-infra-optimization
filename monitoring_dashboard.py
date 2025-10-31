@@ -8,9 +8,11 @@ import sys
 import time
 import json
 from datetime import datetime
-sys.path.insert(0, '/root/kcloud_opt/venv/lib/python3.12/site-packages')
 
-from virtual_cluster_monitoring import VirtualClusterMonitor
+try:
+    from virtual_cluster_monitoring import VirtualClusterMonitor
+except ImportError:
+    raise ImportError("virtual_cluster_monitoring not found. Please ensure it's in PYTHONPATH")
 
 def clear_screen():
     """화면 지우기"""

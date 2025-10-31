@@ -8,8 +8,13 @@ import sys
 import time
 from datetime import datetime
 
-sys.path.insert(0, '/root/kcloud_opt')
-from infrastructure.monitoring.integrated_monitor import IntegratedMonitor
+try:
+    from infrastructure.monitoring.integrated_monitor import IntegratedMonitor
+except ImportError:
+    try:
+        from .integrated_monitor import IntegratedMonitor
+    except ImportError:
+        raise ImportError("IntegratedMonitor not found. Please ensure it's in PYTHONPATH")
 
 def demo_monitoring_features():
     """모니터링 기능 데모"""

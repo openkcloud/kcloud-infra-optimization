@@ -12,18 +12,32 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 from contextlib import asynccontextmanager
 
-# 경로 설정
-sys.path.insert(0, '/root/kcloud_opt')
+# 패키지 import - 환경에 설치되어 있거나 PYTHONPATH에 있어야 합니다
+try:
+    from infrastructure.database.connection import get_database_manager, init_database, close_database
+    from infrastructure.monitoring.enhanced_metrics_collector import EnhancedMetricsCollector, EnhancedClusterMetrics
+    from infrastructure.monitoring.enhanced_alert_system import EnhancedAlertSystem, EnhancedAlert
+    from infrastructure.database.redis_keys import RedisKeys, RedisPubSubChannels, RedisDataTypes
+    from infrastructure.monitoring.realtime_dashboard import RealTimeDashboard
+except ImportError:
+    # 상대 import 시도
+    try:
+        from database.connection import get_database_manager, init_database, close_database
+        from enhanced_metrics_collector import EnhancedMetricsCollector, EnhancedClusterMetrics
+        from enhanced_alert_system import EnhancedAlertSystem, EnhancedAlert
+        from database.redis_keys import RedisKeys, RedisPubSubChannels, RedisDataTypes
+        from realtime_dashboard import RealTimeDashboard
+    except ImportError:
+        raise ImportError("Required modules not found. Please ensure they're in PYTHONPATH or install the package")
 
-# 통합 컴포넌트 임포트
-from infrastructure.database.connection import get_database_manager, init_database, close_database
-from infrastructure.monitoring.enhanced_metrics_collector import EnhancedMetricsCollector, EnhancedClusterMetrics
-from infrastructure.monitoring.enhanced_alert_system import EnhancedAlertSystem, EnhancedAlert
-from infrastructure.database.redis_keys import RedisKeys, RedisPubSubChannels, RedisDataTypes
-
-# 기존 컴포넌트 (폴백용)
-from infrastructure.monitoring.realtime_dashboard import RealTimeDashboard
-from infrastructure.monitoring.integrated_monitor import IntegratedMonitor
+# 폴백용 IntegratedMonitor (선택적)
+try:
+    from infrastructure.monitoring.integrated_monitor import IntegratedMonitor
+except ImportError:
+    try:
+        from .integrated_monitor import IntegratedMonitor
+    except ImportError:
+        IntegratedMonitor = None  # 폴백 시스템에서는 선택적
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)

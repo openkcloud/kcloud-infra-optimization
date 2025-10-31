@@ -11,8 +11,13 @@ from datetime import datetime
 from typing import Dict, List, Optional
 from collections import deque
 
-sys.path.insert(0, '/root/kcloud_opt')
-from infrastructure.monitoring.metrics_collector import MetricsCollector, ClusterMetrics
+try:
+    from infrastructure.monitoring.metrics_collector import MetricsCollector, ClusterMetrics
+except ImportError:
+    try:
+        from .metrics_collector import MetricsCollector, ClusterMetrics
+    except ImportError:
+        raise ImportError("metrics_collector not found. Please ensure it's in PYTHONPATH")
 
 class RealTimeDashboard:
     """실시간 모니터링 대시보드"""
